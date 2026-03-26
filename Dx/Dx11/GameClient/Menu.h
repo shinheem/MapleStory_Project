@@ -8,6 +8,7 @@ private:
     bool m_bAddTextureWindow;
     bool m_bCreateSpriteWindow;
     bool m_bCreateFlipbookWindow;
+    bool m_bCreateGameObjectWindow;
 
 private:
     void File();
@@ -20,6 +21,8 @@ public:
     void CreateSpriteWindow();
     void CreateSpriteFromTexture(const char* texKey, int sliceX, int sliceY, int count);
     void CreateFlipbookWindow();
+    void CreateGameObjectWindow();
+    void CreateGameObject(const char* name, int layer);
     void CreateFlipbook(const char* prefix, int count);
 
     virtual void Tick() override;

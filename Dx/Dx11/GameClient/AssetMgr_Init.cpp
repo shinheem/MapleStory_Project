@@ -242,6 +242,20 @@ void AssetMgr::CreateEngineTexture()
 
 	Load<ATexture>(L"Tail_Stand", L"Texture\\Hon_Tail_Stand\\Tail_Stand.png");
 
+	Load<ATexture>(L"Left_Head_Attack1", L"Texture\\Hon_Tail_Atteck1\\Left_Head_attack1_Atlas.png");
+
+	Load<ATexture>(L"Middle_Head_Attack1", L"Texture\\Hon_Tail_Atteck1\\Middle_Head_attack1_Atlas.png");
+
+	Load<ATexture>(L"Right_Head_Attack1", L"Texture\\Hon_Tail_Atteck1\\Right_Head_attack1_Atlas.png");
+
+	Load<ATexture>(L"Left_Arm_Attack1", L"Texture\\Hon_Tail_Atteck1\\Left_Arm_attack1_Atlas.png");
+
+	Load<ATexture>(L"Right_Arm_Attack1", L"Texture\\Hon_Tail_Atteck1\\Right_Arm_attack1_Atlas.png");
+
+	Load<ATexture>(L"Leg_Attack1", L"Texture\\Hon_Tail_Atteck1\\Leg_attack1_Atlas.png");
+
+	Load<ATexture>(L"Tail_Attack1", L"Texture\\Hon_Tail_Atteck1\\Tail_attack1_Atlas.png");
+
 	Load<ATexture>(L"Maple_Stand_Right1", L"Texture\\Maple_Stand\\Stand_Right1_Atlas.png");
 
 	Load<ATexture>(L"Maple_Stand_Left1", L"Texture\\Maple_Stand\\Stand_Left1_Atlas.png");

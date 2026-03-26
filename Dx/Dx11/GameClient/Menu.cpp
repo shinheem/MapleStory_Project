@@ -16,6 +16,7 @@ Menu::Menu()
 	, m_bAddTextureWindow(false)
 	, m_bCreateSpriteWindow(false)
 	, m_bCreateFlipbookWindow(false)
+	, m_bCreateGameObjectWindow(false)
 {
 }
 
@@ -41,6 +42,9 @@ void Menu::Tick()
 		GameObjectMenu();
 
 		Asset();		
+
+		if (m_bCreateGameObjectWindow)
+			CreateGameObjectWindow();
 
 		if (m_bCreateSpriteWindow)
 			CreateSpriteWindow();
@@ -139,6 +143,12 @@ void Menu::GameObjectMenu()
 {
 	if (ImGui::BeginMenu("GameObject"))
 	{
+
+		if (ImGui::MenuItem("Create GameObject"))
+		{
+			m_bCreateGameObjectWindow = true;
+		}
+
 		if (ImGui::BeginMenu("Add Script"))
 		{
 			vector<wstring> vecScriptName;
@@ -349,7 +359,54 @@ void Menu::CreateFlipbook(const char* prefix, int count)
 
 	AssetMgr::GetInst()->AddAsset(flipName, pFlip.Get());
 
-	// 🔥 파일 저장
 	wstring path = CONTENT_PATH + flipName;
 	pFlip->Save(path);
+}
+
+void Menu::CreateGameObjectWindow()
+{
+	ImGui::Begin("Create GameObject", &m_bCreateGameObjectWindow);
+
+	static char name[64] = "New GameObject";
+	static int layer = 0;
+
+	ImGui::InputText("Name", name, 64);
+
+	const char* layerNames[] = {
+		"Default",
+		"Background",
+		"Tile",
+		"Player",
+		"PlayerProjectile",
+		"Enemy",
+		"EnemyProjectile"
+	};
+
+	ImGui::Combo("Layer", &layer, layerNames, IM_ARRAYSIZE(layerNames));
+
+	if (ImGui::Button("Create"))
+	{
+		CreateGameObject(name, layer);
+	}
+
+	ImGui::End();
+}
+
+void Menu::CreateGameObject(const char* name, int layer)
+{
+	Ptr<GameObject> obj = new GameObject;
+
+	// 이름 설정
+	wstring wName(name, name + strlen(name));
+	obj->SetName(wName);
+
+	// 기본 컴포넌트
+	obj->AddComponent(new CTransform);
+
+	// 레벨에 추가
+	Ptr<ALevel> pLevel = LevelMgr::GetInst()->GetCurLevel();
+	if (pLevel)
+	{
+		pLevel->AddObject(layer, obj);
+	}
 }
