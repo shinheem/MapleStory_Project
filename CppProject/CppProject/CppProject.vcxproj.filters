@@ -1,0 +1,285 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="1주차">
+      <UniqueIdentifier>{090d73ca-4682-41f2-ac19-2d3cb2b3bd96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1주차\2025_1208">
+      <UniqueIdentifier>{516f6ad4-f97a-46a5-bd39-573301551014}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1주차\2025_1209">
+      <UniqueIdentifier>{202b4361-9cf4-490d-bffc-2f8722d0e42b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1주차\2025_1210">
+      <UniqueIdentifier>{a9357ac8-ee0f-499a-8ade-738916db877b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1주차\2025_1211">
+      <UniqueIdentifier>{555e0556-3b8c-4edf-a4c2-1f7a2044082c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1주차\2025_1212">
+      <UniqueIdentifier>{54da2fd9-95f8-4e4d-93d1-bfb2cd401750}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2주차">
+      <UniqueIdentifier>{f8d3a240-b22a-4f7b-b52c-0f507e9a27fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2주차\2025_1216">
+      <UniqueIdentifier>{40b5ce2f-b7ca-4b3d-b351-731d967cedea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2주차\2025_1217">
+      <UniqueIdentifier>{b968b71b-32df-41e5-9173-cb631ac2a2ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2주차\2025_1215">
+      <UniqueIdentifier>{275fc519-946a-4925-ae87-43b26b63b890}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2주차\2025_1218">
+      <UniqueIdentifier>{72c390bf-7bfb-4d18-bb15-93ec980351aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataStructure">
+      <UniqueIdentifier>{301f0283-3380-4855-a56b-1d43754f5983}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataStructure\Array">
+      <UniqueIdentifier>{813cc888-8904-4881-a99c-cb3c836a6413}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2주차\2025_1219">
+      <UniqueIdentifier>{07dc4fb2-176e-48f7-89f6-7a28eec64103}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3주차">
+      <UniqueIdentifier>{4bbc6ea5-cb96-4c1f-8d43-d818c24f61b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3주차\2025_1222">
+      <UniqueIdentifier>{b2adacdf-69bb-4339-806f-1516e8488177}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataStructure\List">
+      <UniqueIdentifier>{0b4b649d-5d4e-4ee6-9bf9-078438e125d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3주차\2025_1223">
+      <UniqueIdentifier>{fe9df79f-b483-4b5d-b4fa-e59895bc2dca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3주차\2025_1224">
+      <UniqueIdentifier>{5f4bce33-a945-49b8-a5cb-d03094e8ad2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="4주차">
+      <UniqueIdentifier>{a93012f7-18e6-4c9d-889d-ccd394335742}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataStructure\Heap">
+      <UniqueIdentifier>{3bc98703-6835-4e7d-a0d0-a52f4ede88d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="4주차\2025_1229">
+      <UniqueIdentifier>{3e88cda9-360a-44bd-8b67-2434bd4d7ee2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="4주차\2025_1230">
+      <UniqueIdentifier>{49601c18-c3e1-415a-9eb9-dbc9f9951a3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="4주차\2025_1231">
+      <UniqueIdentifier>{74c5fbdb-642c-4e4d-ad9c-ccd5aee031ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="4주차\2026_0102">
+      <UniqueIdentifier>{57702ce1-bfc4-45a2-9e84-d72d3701e711}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="5주차">
+      <UniqueIdentifier>{ec147c68-9a85-4c24-a05e-99da85abdbb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="5주차\2026_0105">
+      <UniqueIdentifier>{4b5f6dc3-8cbe-492a-a90a-bc30804bc2cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="5주차\2026_0106">
+      <UniqueIdentifier>{a1cf829c-40f8-4d2d-8048-5e5b1b2557fe}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Math.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="main1208.cpp">
+      <Filter>1주차\2025_1208</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1209_1.cpp">
+      <Filter>1주차\2025_1209</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1209_２.cpp">
+      <Filter>1주차\2025_1209</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1209_３.cpp">
+      <Filter>1주차\2025_1209</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1210_1.cpp">
+      <Filter>1주차\2025_1210</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1210_2.cpp">
+      <Filter>1주차\2025_1210</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1210_3.cpp">
+      <Filter>1주차\2025_1210</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1211_1.cpp">
+      <Filter>1주차\2025_1211</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1211_2.cpp">
+      <Filter>1주차\2025_1211</Filter>
+    </ClCompile>
+    <ClCompile Include="Test.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1211_3.cpp">
+      <Filter>1주차\2025_1211</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1211_4.cpp">
+      <Filter>1주차\2025_1211</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1212_1.cpp">
+      <Filter>1주차\2025_1212</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1212_2.cpp">
+      <Filter>1주차\2025_1212</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1212_3.cpp">
+      <Filter>1주차\2025_1212</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1212_4.cpp">
+      <Filter>1주차\2025_1212</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1215_1.cpp">
+      <Filter>2주차\2025_1215</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1215_2.cpp">
+      <Filter>2주차\2025_1215</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1215_3_MY.cpp">
+      <Filter>2주차\2025_1215</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1215_3_TEACHER.cpp">
+      <Filter>2주차\2025_1215</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1215_4.cpp">
+      <Filter>2주차\2025_1215</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1216_1.cpp">
+      <Filter>2주차\2025_1216</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1216_2.cpp">
+      <Filter>2주차\2025_1216</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1216_3.cpp">
+      <Filter>2주차\2025_1216</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1216_4.cpp">
+      <Filter>2주차\2025_1216</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1217_1.cpp">
+      <Filter>2주차\2025_1217</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1217_2.cpp">
+      <Filter>2주차\2025_1217</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1217_3.cpp">
+      <Filter>2주차\2025_1217</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1218_1.cpp">
+      <Filter>2주차\2025_1218</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1218_2.cpp">
+      <Filter>2주차\2025_1218</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1218_3.cpp">
+      <Filter>2주차\2025_1218</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1218_4.cpp">
+      <Filter>DataStructure\Array</Filter>
+    </ClCompile>
+    <ClCompile Include="main_20251219_1.cpp">
+      <Filter>2주차\2025_1219</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1222_1.cpp">
+      <Filter>3주차\2025_1222</Filter>
+    </ClCompile>
+    <ClCompile Include="main_20251219_２.cpp">
+      <Filter>2주차\2025_1219</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1222_2.cpp">
+      <Filter>3주차\2025_1222</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1223_1.cpp">
+      <Filter>3주차\2025_1223</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1223_2.cpp">
+      <Filter>3주차\2025_1223</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1224_1.cpp">
+      <Filter>3주차\2025_1224</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1224_2.cpp">
+      <Filter>3주차\2025_1224</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1229_1.cpp">
+      <Filter>4주차\2025_1229</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1229_2.cpp">
+      <Filter>4주차\2025_1229</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1229_3.cpp">
+      <Filter>4주차\2025_1229</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1229_4.cpp">
+      <Filter>4주차\2025_1229</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1230%28상속기초%29.cpp">
+      <Filter>4주차\2025_1230</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1230(상속과 생성자 소멸자).cpp">
+      <Filter>4주차\2025_1230</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1230(자료구조 힙).cpp">
+      <Filter>4주차\2025_1230</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1231(힙 모드 변경).cpp">
+      <Filter>4주차\2025_1231</Filter>
+    </ClCompile>
+    <ClCompile Include="main_1231(이진탐색).cpp">
+      <Filter>4주차\2025_1231</Filter>
+    </ClCompile>
+    <ClCompile Include="main_0102(BST insert 함수 구현).cpp">
+      <Filter>4주차\2026_0102</Filter>
+    </ClCompile>
+    <ClCompile Include="main_0105(BST iterator).cpp">
+      <Filter>5주차\2026_0105</Filter>
+    </ClCompile>
+    <ClCompile Include="main_0106%28다형성%29.cpp">
+      <Filter>5주차\2026_0106</Filter>
+    </ClCompile>
+    <ClCompile Include="main_0106(가상함수).cpp">
+      <Filter>5주차\2026_0106</Filter>
+    </ClCompile>
+    <ClCompile Include="main_0106(추상화순수가상함수).cpp">
+      <Filter>5주차\2026_0106</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Math.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Arr.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="List.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Heap.h">
+      <Filter>DataStructure\Heap</Filter>
+    </ClInclude>
+    <ClInclude Include="BST.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
