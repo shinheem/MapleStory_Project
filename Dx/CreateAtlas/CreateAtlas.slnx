@@ -1,7 +1,0 @@
-<Solution>
-  <Configurations>
-    <Platform Name="x64" />
-    <Platform Name="x86" />
-  </Configurations>
-  <Project Path="CreateAtlas/CreateAtlas.vcxproj" Id="29d1e4cb-da73-461d-85df-24fc7b82af41" />
-</Solution>
