@@ -17,6 +17,9 @@ Menu::Menu()
 	, m_bCreateSpriteWindow(false)
 	, m_bCreateFlipbookWindow(false)
 	, m_bCreateGameObjectWindow(false)
+	, m_bCollisionWindow(false)
+	, m_bLayerNameWindow(false)
+	, m_CollisionMatrix{}
 {
 }
 
@@ -42,6 +45,11 @@ void Menu::Tick()
 		GameObjectMenu();
 
 		Asset();		
+		if(m_bLayerNameWindow)
+			UpdateayerNameEditorWindow();
+
+		if (m_bCollisionWindow)
+			CollisionWindow();
 
 		if (m_bCreateGameObjectWindow)
 			CreateGameObjectWindow();
@@ -143,6 +151,16 @@ void Menu::GameObjectMenu()
 {
 	if (ImGui::BeginMenu("GameObject"))
 	{
+
+		if (ImGui::MenuItem("Update LayerName"))
+		{
+			m_bLayerNameWindow = true;
+		}
+
+		if (ImGui::MenuItem("Update Layer Collider2D"))
+		{
+			m_bCollisionWindow = true;
+		}
 
 		if (ImGui::MenuItem("Create GameObject"))
 		{
@@ -367,19 +385,14 @@ void Menu::CreateGameObjectWindow()
 {
 	ImGui::Begin("Create GameObject", &m_bCreateGameObjectWindow);
 
-	static char name[64] = "New GameObject";
+	static char name[64] = "NewGameObject";
 	static int layer = 0;
 
 	ImGui::InputText("Name", name, 64);
 
 	const char* layerNames[] = {
-		"Default",
-		"Background",
-		"Tile",
-		"Player",
-		"PlayerProjectile",
-		"Enemy",
-		"EnemyProjectile"
+		"Default", "Background", "Tile", "Player",
+		"PlayerProjectile", "Enemy", "EnemyProjectile"
 	};
 
 	ImGui::Combo("Layer", &layer, layerNames, IM_ARRAYSIZE(layerNames));
@@ -389,6 +402,71 @@ void Menu::CreateGameObjectWindow()
 		CreateGameObject(name, layer);
 	}
 
+	ImGui::Separator();
+
+	// --- 오브젝트 삭제 UI ---
+	static int deleteLayer = 0;
+	static int selectedObjectIndex = 0;
+
+	ImGui::Combo("Delete Layer", &deleteLayer, layerNames, IM_ARRAYSIZE(layerNames));
+
+	Ptr<ALevel> pLevel = LevelMgr::GetInst()->GetCurLevel();
+	if (pLevel)
+	{
+		auto& objects = pLevel->GetLayer(deleteLayer)->GetAllObjects();
+		int objCount = (int)objects.size();
+
+		static std::vector<std::string> objNameStrs;
+		objNameStrs.clear();
+		for (int i = 0; i < objCount; ++i)
+			objNameStrs.push_back(std::string(objects[i]->GetName().begin(), objects[i]->GetName().end()));
+
+		const char* objNames[64] = {};
+		for (int i = 0; i < objCount; ++i)
+			objNames[i] = objNameStrs[i].c_str();
+
+		if (objCount > 0)
+		{
+			ImGui::Combo("Object", &selectedObjectIndex, objNames, objCount);
+
+			if (ImGui::Button("Delete Object"))
+			{
+				DeleteGameObject(deleteLayer, selectedObjectIndex);
+				selectedObjectIndex = 0;
+			}
+		}
+		else
+		{
+			ImGui::Text("No objects in this layer.");
+		}
+
+		// --- 레이어 삭제 UI ---
+		ImGui::Separator();
+		if (ImGui::Button("Delete Entire Layer"))
+		{
+			Layer* l = pLevel->GetLayer(deleteLayer);
+			if (l)
+			{
+				// 레이어 안 모든 오브젝트 제거
+				auto allObjs = l->GetAllObjects();
+				for (auto& obj : allObjs)
+				{
+					pLevel->RemoveObject(obj); // 기존 Level 함수 사용
+				}
+
+				// 레이어 초기화
+				l->DeregisterObject();
+				l->DeregisterAsParent(nullptr); // nullptr로 모든 부모 제거
+			}
+		}
+
+		// --- 레이어 추가 UI ---
+		if (ImGui::Button("Add New Layer"))
+		{
+			pLevel->AddLayer(); // 새 레이어 생성 함수가 필요
+		}
+	}
+
 	ImGui::End();
 }
 
@@ -396,17 +474,112 @@ void Menu::CreateGameObject(const char* name, int layer)
 {
 	Ptr<GameObject> obj = new GameObject;
 
-	// 이름 설정
-	wstring wName(name, name + strlen(name));
+	std::wstring wName(name, name + strlen(name));
 	obj->SetName(wName);
 
-	// 기본 컴포넌트
 	obj->AddComponent(new CTransform);
 
-	// 레벨에 추가
 	Ptr<ALevel> pLevel = LevelMgr::GetInst()->GetCurLevel();
 	if (pLevel)
 	{
 		pLevel->AddObject(layer, obj);
 	}
+}
+
+void Menu::DeleteGameObject(int layerIdx, int objIndex)
+{
+	Ptr<ALevel> pLevel = LevelMgr::GetInst()->GetCurLevel();
+	if (!pLevel) return;
+
+	auto& objects = pLevel->GetObjects(layerIdx);
+	if (objIndex < 0 || objIndex >= (int)objects.size()) return;
+
+	Ptr<GameObject> objToDelete = objects[objIndex];
+
+	pLevel->RemoveObject(objToDelete);
+}
+
+void Menu::CollisionWindow()
+{
+    ImGui::Begin("Layer Collision", &m_bCollisionWindow);
+
+    Ptr<ALevel> pLevel = LevelMgr::GetInst()->GetCurLevel();
+    if (!pLevel) { ImGui::End(); return; }
+
+    int layerCount = (int)pLevel->GetLayerCount();
+    
+    // CollisionMatrix 크기 안전하게 맞추기
+    while ((int)m_CollisionMatrix.size() < layerCount)
+        AddLayerToCollisionMatrix();
+
+    for (int i = 0; i < layerCount; ++i)
+    {
+        for (int j = i + 1; j < layerCount; ++j)
+        {
+            bool collide = m_CollisionMatrix[i][j];
+            std::wstring label = pLevel->GetLayer(i)->GetName() + L" <-> " + pLevel->GetLayer(j)->GetName();
+            if (ImGui::Checkbox(std::string(label.begin(), label.end()).c_str(), &collide))
+            {
+                m_CollisionMatrix[i][j] = collide;
+                if (collide)
+                    pLevel->CheckCollisionLayer(i, j);
+                else
+                    pLevel->UncheckCollisionLayer(i, j);
+            }
+        }
+    }
+
+    ImGui::End();
+}
+
+void Menu::AddLayerToCollisionMatrix()
+{
+	int newSize = (int)m_CollisionMatrix.size() + 1;
+	m_CollisionMatrix.resize(newSize);
+	for (auto& row : m_CollisionMatrix)
+		row.resize(newSize, false); // 새 레이어 기본값 false
+}
+
+void Menu::RemoveLayerFromCollisionMatrix(int layerIdx)
+{
+	m_CollisionMatrix.erase(m_CollisionMatrix.begin() + layerIdx);
+	for (auto& row : m_CollisionMatrix)
+		row.erase(row.begin() + layerIdx);
+}
+
+void Menu::UpdateayerNameEditorWindow()
+{
+	if (!m_bLayerNameWindow)
+		return;
+
+	ImGui::Begin("Layer Name Editor", &m_bLayerNameWindow);
+
+	Ptr<ALevel> pLevel = LevelMgr::GetInst()->GetCurLevel();
+	if (pLevel)
+	{
+		int layerCount = (int)pLevel->GetLayerCount();
+
+		ImGui::Text("=== Layer List ===");
+		ImGui::Separator();
+
+		for (int i = 0; i < layerCount; ++i)
+		{
+			Layer* l = pLevel->GetLayer(i);
+			if (!l) continue;
+
+			std::wstring wLayerName = l->GetName();
+			std::string layerNameStr(wLayerName.begin(), wLayerName.end());
+
+			char buf[128];
+			strcpy_s(buf, layerNameStr.c_str());
+
+			if (ImGui::InputText(("Layer " + std::to_string(i)).c_str(), buf, IM_ARRAYSIZE(buf)))
+			{
+				std::wstring newName(buf, buf + strlen(buf));
+				l->SetName(newName);
+			}
+		}
+	}
+
+	ImGui::End();
 }

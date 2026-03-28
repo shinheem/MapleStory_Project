@@ -95,3 +95,14 @@ void Layer::Render()
 		m_vecParents[i]->Render();
 	}
 }
+
+void Layer::RemoveObject(Ptr<GameObject> obj)
+{
+	auto itParent = std::find(m_vecParents.begin(), m_vecParents.end(), obj);
+	if (itParent != m_vecParents.end())
+		m_vecParents.erase(itParent);
+
+	auto itAll = std::find(m_vecAllObjects.begin(), m_vecAllObjects.end(), obj);
+	if (itAll != m_vecAllObjects.end())
+		m_vecAllObjects.erase(itAll);
+}

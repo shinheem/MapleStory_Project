@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ALevel.h"
 
+#include "LevelMgr.h"
 
 
 ALevel::ALevel()
@@ -196,4 +197,54 @@ int ALevel::Load(const wstring& _FilePath)
 	fclose(pFile);
 
 	return S_OK;
+}
+
+// ALevel.cpp에 추가
+Layer* ALevel::AddLayer()
+{
+	for (int i = 0; i < MAX_LAYER; ++i)
+	{
+		// 비어있는 레이어인지 확인 (예: 레이어가 비어있으면 Parent 오브젝트도 비어있음)
+		if (m_arrLayer[i].GetAllObjects().empty())
+		{
+			m_arrLayer[i] = Layer();   // 새 Layer 초기화
+			m_arrLayer[i].m_LayerIdx = i;
+			SetChanged();              // 레벨 변경 플래그
+			return &m_arrLayer[i];
+		}
+	}
+	return nullptr; // 추가 가능한 슬롯 없음
+}
+
+void ALevel::RemoveLayer(int idx)
+{
+	if (idx < 0 || idx >= MAX_LAYER)
+		return;
+
+	// 레이어 안 모든 오브젝트 제거
+	auto& objs = m_arrLayer[idx].GetAllObjects();
+	for (auto& obj : objs)
+	{
+		RemoveObject(obj); // 기존 Level 함수 사용
+	}
+
+	// 레이어 초기화
+	m_arrLayer[idx].DeregisterObject();
+	m_arrLayer[idx].DeregisterAsParent(nullptr);
+
+	SetChanged(); // 레벨 변경 플래그
+}
+
+int ALevel::GetLayerCount()
+{
+	return MAX_LAYER;
+}
+
+void ALevel::UncheckCollisionLayer(UINT _LayerIdx1, UINT _LayerIdx2)
+{
+    assert(_LayerIdx1 < MAX_LAYER && _LayerIdx2 < MAX_LAYER);
+
+    // 비트 해제: XOR 대신 AND + NOT 사용
+    m_Matrix[_LayerIdx1] &= ~(1 << _LayerIdx2);
+    m_Matrix[_LayerIdx2] &= ~(1 << _LayerIdx1); // 양방향 해제
 }

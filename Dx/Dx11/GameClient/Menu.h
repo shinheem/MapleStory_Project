@@ -9,6 +9,10 @@ private:
     bool m_bCreateSpriteWindow;
     bool m_bCreateFlipbookWindow;
     bool m_bCreateGameObjectWindow;
+    bool m_bCollisionWindow;
+    bool m_bLayerNameWindow;
+
+    vector<vector<bool>> m_CollisionMatrix;
 
 private:
     void File();
@@ -23,7 +27,12 @@ public:
     void CreateFlipbookWindow();
     void CreateGameObjectWindow();
     void CreateGameObject(const char* name, int layer);
+    void DeleteGameObject(int layerIdx, int objIndex);
     void CreateFlipbook(const char* prefix, int count);
+    void CollisionWindow();
+    void UpdateayerNameEditorWindow();
+    void AddLayerToCollisionMatrix();
+    void RemoveLayerFromCollisionMatrix(int layerIdx);
 
     virtual void Tick() override;
     virtual void Tick_UI() override;

@@ -13,14 +13,41 @@ private:
 
 
 public:
+    void UncheckCollisionLayer(UINT _LayerIdx1, UINT _LayerIdx2);
+    int GetLayerCount();
     void AddObject(int _LayerIdx, Ptr<GameObject> _Object);
     Layer* GetLayer(int _Idx) { assert(0 <= _Idx && _Idx < MAX_LAYER); return &m_arrLayer[_Idx]; }
     void Deregister();
     void CheckCollisionLayer(UINT _LayerIdx1, UINT _LayerIdx2);
     void CheckCollisionLayer(const wstring& _LayerName1, const wstring& _LayerName2);
+
     UINT* GetCollisionMatrix() { return m_Matrix; }
     Ptr<GameObject> FindObjectByName(const wstring& _Name);
     vector<Ptr<GameObject>> GetAllObjects();
+    vector<Ptr<GameObject>>& GetObjects(int layerIdx)
+    {
+        assert(0 <= layerIdx && layerIdx < MAX_LAYER);
+        return m_arrLayer[layerIdx].GetAllObjects();
+    }
+
+    // 특정 오브젝트 삭제
+    void RemoveObject(Ptr<GameObject> obj)
+    {
+        for (int i = 0; i < MAX_LAYER; ++i)
+        {
+            auto& objs = m_arrLayer[i].GetAllObjects();
+            auto it = std::find(objs.begin(), objs.end(), obj);
+            if (it != objs.end())
+            {
+                m_arrLayer[i].RemoveObject(obj);
+                SetChanged();
+                break;
+            }
+        }
+    }
+
+    Layer* AddLayer();
+    void RemoveLayer(int idx);
 
     bool IsChanged()
     {

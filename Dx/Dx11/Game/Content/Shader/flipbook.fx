@@ -76,6 +76,9 @@ float4 PS_Flipbook(VS_OUT _input) : SV_Target
     // 물체의 색상에, 자신이 받는 최종빛 총량을 곱한다.
     vColor.rgb *= LightColor;
     
+    // 겉에 하얀색 테두리 제거
+    vColor.rgb *= vColor.a;
+    
     return vColor;
 }
 

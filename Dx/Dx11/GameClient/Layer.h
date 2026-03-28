@@ -16,9 +16,21 @@ public:
     void RegisterObject(Ptr<GameObject> _Object) { m_vecAllObjects.push_back(_Object); }
     void DeregisterObject() {  m_vecAllObjects.clear(); }
     void DeregisterAsParent(Ptr<GameObject> _Object);
+    void RemoveObject(Ptr<GameObject> obj);
 
     const vector<Ptr<GameObject>>& GetParentObjects() { return m_vecParents; }
-    const vector<Ptr<GameObject>>& GetAllObjects() { return m_vecAllObjects; }
+    vector<Ptr<GameObject>>& GetAllObjects() { return m_vecAllObjects; }
+
+    Layer& operator=(const Layer& _Other)
+    {
+        if (this == &_Other) return *this;
+
+        m_vecParents = _Other.m_vecParents;
+        m_vecAllObjects = _Other.m_vecAllObjects;
+        m_LayerIdx = _Other.m_LayerIdx;
+
+        return *this;
+    }
 
 public:
     void Begin();
