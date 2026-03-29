@@ -9,7 +9,7 @@
 #include "ListUI.h"
 
 FlipbookRenderUI::FlipbookRenderUI()
-	: ComponentUI(COMPONENT_TYPE::FLIPBOOK_RENDER, "FlipbookRenderUI")
+    : ComponentUI(COMPONENT_TYPE::FLIPBOOK_RENDER, "FlipbookRenderUI")
     , m_CurIdx()
 {
 }

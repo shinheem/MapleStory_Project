@@ -106,6 +106,21 @@ void Inspector::AddComponents()
                 }
             }
 
+            // Camera
+            if (nullptr == m_TargetObject->GetComponent(COMPONENT_TYPE::CAMERA))
+            {
+                if (ImGui::Button("Add Camera"))
+                {
+                    TaskInfo info{};
+                    info.Type = TASK_TYPE::ADD_COMPONENT;
+                    info.Param_0 = (DWORD_PTR)m_TargetObject.Get();
+                    info.Param_1 = (DWORD_PTR)new CCamera;
+                    TaskMgr::GetInst()->AddTask(info);
+
+                    m_arrComUI[(UINT)COMPONENT_TYPE::CAMERA]->SetActive(true);
+                }
+            }
+
             // Collider2D
             if (nullptr == m_TargetObject->GetComponent(COMPONENT_TYPE::COLLIDER2D))
             {
@@ -253,6 +268,73 @@ void Inspector::SetTargetAsset(Ptr<Asset> _Asset)
     }
 }
 
+void Inspector::ChangeObjectLayer(Ptr<GameObject> obj, int newLayer)
+{
+    if (!obj)
+        return;
+
+    Ptr<ALevel> pLevel = LevelMgr::GetInst()->GetCurLevel();
+    if (!pLevel)
+        return;
+
+    int oldLayer = obj->GetLayerIdx();
+
+    // 1️⃣ 기존 레이어에서 제거
+    if (oldLayer >= 0 && oldLayer < pLevel->GetLayerCount())
+    {
+        Layer* oldLayerPtr = pLevel->GetLayer(oldLayer);
+        if (oldLayerPtr)
+        {
+            oldLayerPtr->RemoveObject(obj);
+        }
+    }
+
+    // 2️⃣ 새 레이어에 추가
+    if (newLayer >= 0 && newLayer < pLevel->GetLayerCount())
+    {
+        pLevel->AddObject(newLayer, obj);
+        obj->SetLayerIdx(newLayer);
+    }
+}
+
+void Inspector::DrawLayerSelectorUI(Ptr<GameObject> targetObject)
+{
+    if (!targetObject)
+        return;
+
+    Ptr<ALevel> pLevel = LevelMgr::GetInst()->GetCurLevel();
+    if (!pLevel)
+        return;
+
+    // 접기/펼치기
+    if (ImGui::CollapsingHeader("Layer Selector"))
+    {
+        int currentLayer = targetObject->GetLayerIdx();
+        int layerCount = pLevel->GetLayerCount();
+
+        for (int i = 0; i < layerCount; ++i)
+        {
+            Layer* layer = pLevel->GetLayer(i);
+            if (!layer) continue;
+
+            // 레이어 이름 가져오기
+            std::wstring wName = layer->GetName();
+            std::string nameStr(wName.begin(), wName.end());
+
+            // 표시 텍스트: "0 - DefaultLayer" 형식
+            std::string displayStr = std::to_string(i) + " - " + nameStr;
+
+            bool isSelected = (currentLayer == i);
+
+            if (ImGui::Selectable(displayStr.c_str(), isSelected))
+            {
+                // 클릭 시 레이어 이동
+                ChangeObjectLayer(targetObject, i);
+            }
+        }
+    }
+}
+
 // UI Tick
 void Inspector::Tick_UI()
 {
@@ -283,4 +365,6 @@ void Inspector::Tick_UI()
 
     // Script Add/Remove UI
     AddScriptUI();
+
+    DrawLayerSelectorUI(m_TargetObject);
 }

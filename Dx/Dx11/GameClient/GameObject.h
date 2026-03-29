@@ -43,7 +43,7 @@ public:
     Ptr<CRenderComponent> GetRenderComponent() { return m_RenderCom; }
 
     vector<Ptr<CScript>> GetScripts() { return m_vecScripts; }
-
+    void SetLayerIdx(int LayerIdx) { m_LayerIdx = LayerIdx; }
     int GetLayerIdx() { return m_LayerIdx; }
 
     template<typename T>

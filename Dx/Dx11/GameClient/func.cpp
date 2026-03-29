@@ -101,13 +101,16 @@ void SaveWString(FILE* _File, const wstring& _String)
 
 wstring LoadWString(FILE* _File)
 {
-    int Len = 0;
-    fread(&Len, sizeof(int), 1, _File);
+	int Len = 0;
+	if (fread(&Len, sizeof(int), 1, _File) != 1) return L"";
 
-    wchar_t buff[255] = {};
-    fread(buff, sizeof(wchar_t), Len, _File);
+	wstring str;
+	str.resize(Len);
 
-    return buff;
+	// 2. 문자열 데이터를 str의 메모리 버퍼로 직접 읽기
+	fread(&str[0], sizeof(wchar_t), Len, _File);
+
+    return str;
 }
 
 void SaveAssetRef(FILE* _File, Asset* _Asset)

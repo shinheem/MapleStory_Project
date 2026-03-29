@@ -390,12 +390,26 @@ void Menu::CreateGameObjectWindow()
 
 	ImGui::InputText("Name", name, 64);
 
-	const char* layerNames[] = {
-		"Default", "Background", "Tile", "Player",
-		"PlayerProjectile", "Enemy", "EnemyProjectile"
-	};
+	// --- 생성용 레이어를 현재 레벨 기준으로 동적 리스트 생성 ---
+	Ptr<ALevel> pLevel = LevelMgr::GetInst()->GetCurLevel();
+	std::vector<std::string> layerNameStrs;
+	if (pLevel)
+	{
+		int layerCount = pLevel->GetLayerCount();
+		for (int i = 0; i < layerCount; ++i)
+		{
+			wstring wName = pLevel->GetLayer(i)->GetName();
+			std::string strName = wName.empty() ? "None" : std::string(wName.begin(), wName.end());
+			layerNameStrs.push_back(strName);
+		}
+	}
 
-	ImGui::Combo("Layer", &layer, layerNames, IM_ARRAYSIZE(layerNames));
+	std::vector<const char*> layerNamesCStr;
+	for (auto& s : layerNameStrs)
+		layerNamesCStr.push_back(s.c_str());
+
+	if (!layerNamesCStr.empty())
+		ImGui::Combo("Layer", &layer, layerNamesCStr.data(), layerNamesCStr.size());
 
 	if (ImGui::Button("Create"))
 	{
@@ -408,9 +422,9 @@ void Menu::CreateGameObjectWindow()
 	static int deleteLayer = 0;
 	static int selectedObjectIndex = 0;
 
-	ImGui::Combo("Delete Layer", &deleteLayer, layerNames, IM_ARRAYSIZE(layerNames));
+	if (!layerNamesCStr.empty())
+		ImGui::Combo("Delete Layer", &deleteLayer, layerNamesCStr.data(), layerNamesCStr.size());
 
-	Ptr<ALevel> pLevel = LevelMgr::GetInst()->GetCurLevel();
 	if (pLevel)
 	{
 		auto& objects = pLevel->GetLayer(deleteLayer)->GetAllObjects();
@@ -421,13 +435,13 @@ void Menu::CreateGameObjectWindow()
 		for (int i = 0; i < objCount; ++i)
 			objNameStrs.push_back(std::string(objects[i]->GetName().begin(), objects[i]->GetName().end()));
 
-		const char* objNames[64] = {};
+		std::vector<const char*> objNamesCStr(objCount);
 		for (int i = 0; i < objCount; ++i)
-			objNames[i] = objNameStrs[i].c_str();
+			objNamesCStr[i] = objNameStrs[i].c_str();
 
 		if (objCount > 0)
 		{
-			ImGui::Combo("Object", &selectedObjectIndex, objNames, objCount);
+			ImGui::Combo("Object", &selectedObjectIndex, objNamesCStr.data(), objCount);
 
 			if (ImGui::Button("Delete Object"))
 			{
@@ -438,32 +452,6 @@ void Menu::CreateGameObjectWindow()
 		else
 		{
 			ImGui::Text("No objects in this layer.");
-		}
-
-		// --- 레이어 삭제 UI ---
-		ImGui::Separator();
-		if (ImGui::Button("Delete Entire Layer"))
-		{
-			Layer* l = pLevel->GetLayer(deleteLayer);
-			if (l)
-			{
-				// 레이어 안 모든 오브젝트 제거
-				auto allObjs = l->GetAllObjects();
-				for (auto& obj : allObjs)
-				{
-					pLevel->RemoveObject(obj); // 기존 Level 함수 사용
-				}
-
-				// 레이어 초기화
-				l->DeregisterObject();
-				l->DeregisterAsParent(nullptr); // nullptr로 모든 부모 제거
-			}
-		}
-
-		// --- 레이어 추가 UI ---
-		if (ImGui::Button("Add New Layer"))
-		{
-			pLevel->AddLayer(); // 새 레이어 생성 함수가 필요
 		}
 	}
 

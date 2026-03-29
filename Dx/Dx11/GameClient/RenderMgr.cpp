@@ -33,35 +33,29 @@ void RenderMgr::Progress()
 	if (KEY_TAP(KEY::F9))
 		m_bDebugRender ? m_bDebugRender = false : m_bDebugRender = true;
 	
-
-	// 레더링 시작전에 할 일
+	// 렌더링 시작전에 할 일
 	Render_Start();
 
-	// Level 의 상태가 Play 상태면, 등록된 MainCam 으로 렌더링
+	if (m_UICam)
+	{
+		m_UICam->SortObject();
+		m_UICam->Render();
+	}
+
+	CCamera* activeCam = nullptr;
+
+	// 🔹 현재 사용할 월드 카메라 선택
 	if (LEVEL_STATE::PLAY == LevelMgr::GetInst()->GetLevelState())
-	{
-		// 카메라 기반 렌더링
-		if (nullptr == m_MainCam)
-			return;
-
-		// 카메라를 이용해서 레벨안에 있는 물체들을 렌더링
-		m_MainCam->SortObject();
-		m_MainCam->Render();		
-	}
-
-	// Level 의 상태가 Pause, Stop 상태면, 등록된 EditorCam 로 렌더링
+		activeCam = m_MainCam.Get();
 	else
-	{
-		// 카메라 기반 렌더링
-		if (nullptr == m_EditorCam)
-			return;
+		activeCam = m_EditorCam.Get();
 
-		// 카메라를 이용해서 레벨안에 있는 물체들을 렌더링
-		m_EditorCam->SortObject();
-		m_EditorCam->Render();		
+	if (activeCam)
+	{
+		activeCam->SortObject();
+		activeCam->Render();
 	}
 
-	// 디버그 렌더링 요청 처리
 	if (m_bDebugRender)
 		Render_Debug();
 

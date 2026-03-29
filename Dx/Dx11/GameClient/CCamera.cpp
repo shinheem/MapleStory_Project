@@ -14,6 +14,9 @@ CCamera::CCamera()
 	: Component(COMPONENT_TYPE::CAMERA)
 	, m_LayerCheck(0)
 	, m_OrthoScale(1.f)
+	, m_Width(10.f)
+	, m_AspectRatio(16.f / 9.f)
+	, m_FOV(XM_PIDIV4)
 {
 
 }
@@ -22,11 +25,18 @@ CCamera::~CCamera()
 {
 }
 
+void CCamera::Init()
+{
+	if (GetOwner()->GetName() == L"UICamera")
+		RenderMgr::GetInst()->RegisterUICamera(this);
+}
+
 void CCamera::Begin()
 {
 	// 레벨이 시작될때 호출됨
 	// RenderMgr 에 카메라(본인)를 등록
-	RenderMgr::GetInst()->RegisterCamera(this);
+	if (GetOwner()->GetName() == L"MainCamera")
+		RenderMgr::GetInst()->RegisterMainCamera(this);
 }
 
 void CCamera::FinalTick()
@@ -117,6 +127,9 @@ void CCamera::SortObject()
 
 		for (size_t j = 0; j < vecObjects.size(); ++j)
 		{
+			if (false == (m_LayerCheck & (1 << i)))
+				continue;
+
 			// 오브젝트가 렌더링을 할 수 있는 상태인지 확인
 			if (nullptr == vecObjects[j]->GetRenderCom()
 				|| nullptr == vecObjects[j]->GetRenderCom()->GetMesh()

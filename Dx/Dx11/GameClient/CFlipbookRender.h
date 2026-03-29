@@ -34,9 +34,9 @@ public:
 
     void AddFlipbook(Ptr<AFlipbook> _Flipbook) { m_vecFlipbook.push_back(_Flipbook); }
 
-    void Play(int _FlipbookIdx, float _FPS, int _RepeatCount) 
-    { 
-        m_CurFlipbook = _FlipbookIdx;        
+    void Play(int _FlipbookIdx, float _FPS, int _RepeatCount)
+    {
+        m_CurFlipbook = _FlipbookIdx;
         m_RepeatCount = _RepeatCount;
         m_FPS = _FPS;
         m_AccTime = 0.f;

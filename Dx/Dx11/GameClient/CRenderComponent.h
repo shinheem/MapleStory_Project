@@ -16,8 +16,8 @@ private:
 
 public:
     GET_SET(Ptr<AMesh>, Mesh)
-    
-    void SetMaterial(Ptr<AMaterial> _Mtrl);
+
+        void SetMaterial(Ptr<AMaterial> _Mtrl);
     Ptr<AMaterial> GetMaterial() { return m_Mtrl; }
     Ptr<AMaterial> GetSharedMaterial();
 
@@ -31,7 +31,7 @@ public:
     virtual void Render() = 0;
 
     // 자신이 사용할 재질 로딩 및 생성
-    virtual void CreateMaterial() = 0; 
+    virtual void CreateMaterial() = 0;
 
     // 저장 불러오기
     virtual void SaveToLevelFile(FILE* _File) override;

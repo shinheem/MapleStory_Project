@@ -4,7 +4,6 @@ TransformMatrix g_Trans = {};
 
 GlobalData		g_Global = {};
 
-
 const char* ASSET_TYPE_STR[(UINT)ASSET_TYPE::END] =
 {
 	"MESH",

@@ -47,6 +47,8 @@ public:
 public:
     virtual void Tick() = 0;
     virtual void FinalTick() final {}
+    virtual void OnTriggerEnter(CCollider2D* _other) {}
+    virtual void OnTriggerExit(CCollider2D* _other) {}
 
 protected:
     void Destroy();

@@ -61,7 +61,7 @@ Ptr<AMaterial> CRenderComponent::CreateDynamicMaterial()
 	{
 		m_Mtrl = m_DynamicMtrl = m_SharedMtrl->Clone();
 		return m_DynamicMtrl;
-	}	
+	}
 }
 
 void CRenderComponent::SaveToLevelFile(FILE* _File)

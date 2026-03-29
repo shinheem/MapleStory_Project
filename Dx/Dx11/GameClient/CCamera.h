@@ -45,6 +45,7 @@ public:
     void SetFOV(float _Degree) { m_FOV = _Degree * (XM_PI / 180.f); }
 
 public:
+    virtual void Init() override;
     virtual void Begin() override;
     virtual void FinalTick() override;
 
@@ -56,6 +57,8 @@ public:
     void SortObject();
     void Render();
 
+    Matrix GetViewMatrix() { return m_matView;  }
+    Matrix GetProjMatrix() { return m_matProj;  }
     // 저장 불러오기
     virtual void SaveToLevelFile(FILE* _File) override;
     virtual void LoadFromLevelFile(FILE* _File) override;

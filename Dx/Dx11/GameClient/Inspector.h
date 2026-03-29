@@ -27,6 +27,8 @@ public:
     void AddComponents();
     void AddScriptUI();
 
+    void ChangeObjectLayer(Ptr<GameObject> obj, int newLayer);
+    void DrawLayerSelectorUI(Ptr<GameObject> targetObject);
     Ptr<Asset> GetTargetAsset() { return m_TargetAsset; }
     void SetTargetAsset(Ptr<Asset> _Asset);
 

@@ -46,11 +46,14 @@ void CameraUI::Tick_UI()
         
         if (ImGui::BeginTable("##LayerCheck", 1, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
         {
-            for (int i = 0; i < 32; i++)
+            for (int i = 0; i < MAX_LAYER; i++)
             {  
                 ImGui::TableNextColumn();
 
-                if (ImGui::Selectable(strLayerName[i].c_str(), &selected[i]))
+                UINT curCheck = GetTarget()->Camera()->GetLayerCheck();
+                bool isSelected = (curCheck & (1 << i)) != 0;
+
+                if (ImGui::Selectable(strLayerName[i].c_str(), isSelected))
                 {
                     GetTarget()->Camera()->LayerCheck(i);
                 }

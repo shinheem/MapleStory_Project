@@ -6,10 +6,21 @@ enum class CB_TYPE
 	TRANSFORM,	// b0
 	MATERIAL,	// b1
 	GLOBAL,		// b2
+	UI,
 
 	END,
 };
 
+enum class LAYER_TYPE
+{
+	Layer_Default,
+	Layer_Background,
+	Layer_Tile,
+	Layer_Player,
+	Layer_PlayerProjectile,
+	Layer_Enemy,
+	Layer_EnemyProjectile,
+};
 
 enum class RS_TYPE
 {

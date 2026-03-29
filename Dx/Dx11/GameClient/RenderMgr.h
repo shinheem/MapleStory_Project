@@ -11,6 +11,7 @@ class RenderMgr
 private:
 	Ptr<CCamera>			m_MainCam;
 	Ptr<CCamera>			m_EditorCam;
+	Ptr<CCamera>			m_UICam;
 
 	Ptr<GameObject>			m_DbgObj;			// 디버그 렌더링을 위한 Dummy GameObject
 	list<DbgInfo>			m_DbgInfoList;		// 디버그 요청 정보
@@ -21,7 +22,8 @@ private:
 	bool					m_bDebugRender;		// 디버그 렌더 기능 On / Off
 
 public:
-	void RegisterCamera(Ptr<CCamera> _Cam) { m_MainCam = _Cam; }
+	void RegisterMainCamera(Ptr<CCamera> _Cam) { m_MainCam = _Cam; }
+	void RegisterUICamera(Ptr<CCamera> _Cam) { m_UICam = _Cam; }
 	void RegisterEditorCamera(Ptr<CCamera> _Cam) { m_EditorCam = _Cam; }
 
 	Ptr<CCamera> GetPOVCamera() { return m_MainCam; }

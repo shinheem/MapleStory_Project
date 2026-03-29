@@ -16,6 +16,7 @@ void ScriptMgr::GetScriptInfo(vector<wstring>& _vec)
 	_vec.push_back(L"CMissileScript");
 	_vec.push_back(L"CMonsterScript");
 	_vec.push_back(L"CPlayerScript");
+	_vec.push_back(L"CBossTriggerScript");
 }
 
 CScript * ScriptMgr::GetScript(const wstring& _strScriptName)

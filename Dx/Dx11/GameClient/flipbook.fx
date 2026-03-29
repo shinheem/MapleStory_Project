@@ -20,7 +20,7 @@ struct VS_OUT
 {
     float4 vPosition : SV_Position; // 래스터라이져로 보낼때, NDC 좌표
     float2 vUV : TEXCOORD;
-    float3 vWorldPos : POSITION;    
+    float3 vWorldPos : POSITION;
 };
 
 VS_OUT VS_Flipbook(VS_IN _input)
@@ -47,7 +47,7 @@ float4 PS_Flipbook(VS_OUT _input) : SV_Target
     if (g_btex_0)
     {
         float2 LeftTop = (LeftTopUV + SliceUV * 0.5f - BackgroundUV * 0.5f);
-        float2 SampleUV = LeftTop + BackgroundUV * _input.vUV - OffsetUV;        
+        float2 SampleUV = LeftTop + BackgroundUV * _input.vUV - OffsetUV;
         
         if (LeftTopUV.x <= SampleUV.x && SampleUV.x <= LeftTopUV.x + SliceUV.x
            && LeftTopUV.y <= SampleUV.y && SampleUV.y <= LeftTopUV.y + SliceUV.y)
@@ -55,14 +55,14 @@ float4 PS_Flipbook(VS_OUT _input) : SV_Target
             vColor = AtlasTex.Sample(g_sam_1, SampleUV);
         }
         else
-        {            
+        {
             vColor = float4(1.f, 1.f, 0.f, 1.f);
             //discard;
         }
         
         if (vColor.a == 0.f)
-            discard;        
-    }    
+            discard;
+    }
     
     // 물체가 받는 빛의 총량
     float3 LightColor = float3(0.f, 0.f, 0.f);
