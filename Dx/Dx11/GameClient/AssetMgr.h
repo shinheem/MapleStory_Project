@@ -27,7 +27,7 @@ private:
 	void CreateEngineTexture();
 	void CreateEngineMaterial();
 	void LoadAllSprites();
-	void LoadAllFlipbooks();
+	void LoadAllMaterials();
 	void CreateEnginePrefab();
 
 public:

@@ -7,6 +7,7 @@
 #include "Scripts/CMissileScript.h"
 #include "Scripts/CMonsterScript.h"
 #include "Scripts/CPlayerScript.h"
+#include "Scripts/CInventoryScript.h"
 
 void ScriptMgr::GetScriptInfo(vector<wstring>& _vec)
 {
@@ -16,7 +17,7 @@ void ScriptMgr::GetScriptInfo(vector<wstring>& _vec)
 	_vec.push_back(L"CMissileScript");
 	_vec.push_back(L"CMonsterScript");
 	_vec.push_back(L"CPlayerScript");
-	_vec.push_back(L"CBossTriggerScript");
+	_vec.push_back(L"CInventoryScript");
 }
 
 CScript * ScriptMgr::GetScript(const wstring& _strScriptName)
@@ -32,7 +33,9 @@ CScript * ScriptMgr::GetScript(const wstring& _strScriptName)
 	if (L"CMonsterScript" == _strScriptName)
 		return new CMonsterScript;
 	if (L"CPlayerScript" == _strScriptName)
-		return new CPlayerScript;
+		return new CPlayerScript; 
+	if (L"CInventoryScript" == _strScriptName)
+		return new CInventoryScript;
 	return nullptr;
 }
 
@@ -57,6 +60,9 @@ CScript * ScriptMgr::GetScript(UINT _iScriptType)
 		break;
 	case (UINT)SCRIPT_TYPE::PLAYERSCRIPT:
 		return new CPlayerScript;
+		break;
+	case (UINT)SCRIPT_TYPE::INVENTORYSCRIPT:
+		return new CInventoryScript;
 		break;
 	}
 	return nullptr;
@@ -89,6 +95,9 @@ const wchar_t * ScriptMgr::GetScriptName(CScript * _pScript)
 	case SCRIPT_TYPE::PLAYERSCRIPT:
 		return L"CPlayerScript";
 		break;
+	case SCRIPT_TYPE::INVENTORYSCRIPT:
+		return L"CInventoryScript";
+		break;
 
 	}
 	return nullptr;
@@ -109,6 +118,8 @@ const wchar_t* ScriptMgr::GetScriptNameByType(SCRIPT_TYPE type)
 		return L"CMonsterScript";
 	case SCRIPT_TYPE::PLAYERSCRIPT:
 		return L"CPlayerScript";
+	case SCRIPT_TYPE::INVENTORYSCRIPT:
+		return L"CInventoryScript";
 	default:
 		return nullptr;
 	}

@@ -11,6 +11,7 @@ private:
     bool m_bCreateGameObjectWindow;
     bool m_bCollisionWindow;
     bool m_bLayerNameWindow;
+    bool m_bCreateMaterialWindow;
 
     vector<vector<bool>> m_CollisionMatrix;
 
@@ -26,6 +27,8 @@ public:
     void CreateSpriteFromTexture(const char* texKey, int sliceX, int sliceY, int count);
     void CreateFlipbookWindow();
     void CreateGameObjectWindow();
+    void CreateMaterialWindow();
+    void CreateMaterial(const char* matName, const char* texName);
     void CreateGameObject(const char* name, int layer);
     void DeleteGameObject(int layerIdx, int objIndex);
     void CreateFlipbook(const char* prefix, int count);

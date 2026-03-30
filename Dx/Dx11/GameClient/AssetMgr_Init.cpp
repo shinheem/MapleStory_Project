@@ -11,14 +11,13 @@ void AssetMgr::Init()
 
 	LoadAllSprites();
 
-	LoadAllFlipbooks();
+	LoadAllMaterials();
 
 	CreateEngineTexture();
 
 	CreateEngineMaterial();
 
 	CreateEnginePrefab();
-
 	
 }
 
@@ -272,6 +271,26 @@ void AssetMgr::CreateEngineTexture()
 
 	Load<ATexture>(L"Horn_Tail_BackGround2", L"Texture\\Horn_Tail_BackGround2.png");
 
+	Load<ATexture>(L"Maple_Inventory", L"Texture\\MapleStory_UI\\InventoryUI\\Inventory.png");
+
+	Load<ATexture>(L"Maple_Inventory_X", L"Texture\\MapleStory_UI\\InventoryUI\\X.png");
+
+	Load<ATexture>(L"Maple_Inventory_XMouse", L"Texture\\MapleStory_UI\\InventoryUI\\XMouse.png");
+
+	Load<ATexture>(L"Maple_ExpBar", L"Texture\\MapleStory_UI\\BottomUI\\ExpBar.png");
+
+	Load<ATexture>(L"Maple_ExpBarBack", L"Texture\\MapleStory_UI\\BottomUI\\ExpBarBack.png");
+
+	Load<ATexture>(L"Maple_MainBar", L"Texture\\MapleStory_UI\\BottomUI\\mainBar.png");
+
+	Load<ATexture>(L"Maple_HpBar", L"Texture\\MapleStory_UI\\BottomUI\\Hp.png");
+
+	Load<ATexture>(L"Maple_MpBar", L"Texture\\MapleStory_UI\\BottomUI\\Mp.png");
+
+	Load<ATexture>(L"Maple_SkillquickSlot", L"Texture\\MapleStory_UI\\BottomUI\\SkillquickSlot.png");
+
+	Load<ATexture>(L"Maple_SkillquickSlotBack", L"Texture\\MapleStory_UI\\BottomUI\\SkillquickSlotBack.png");
+
 }
 
 void AssetMgr::CreateEngineMaterial()
@@ -371,7 +390,7 @@ void AssetMgr::CreateEngineMaterial()
 	pMtrl->SetDomain(RENDER_DOMAIN::DOMAIN_DEBUG);
 	AddAsset(pMtrl->GetName(), pMtrl.Get());
 
-	Load<AMaterial>(L"Material\\Default Material_0.mtrl", L"Material\\Default Material_0.mtrl");
+	//Load<AMaterial>(L"Material\\Default Material_0.mtrl", L"Material\\Default Material_0.mtrl");
 }
 
 void AssetMgr::LoadAllSprites()
@@ -388,16 +407,20 @@ void AssetMgr::LoadAllSprites()
 	}
 }
 
-void AssetMgr::LoadAllFlipbooks()
+void AssetMgr::LoadAllMaterials()
 {
 	vector<wstring> files;
-	PathMgr::GetInst()->GetFiles(CONTENT_PATH + L"Flipbook\\", L".flip", files);
+	PathMgr::GetInst()->GetFiles(CONTENT_PATH + L"Material\\", L".mtrl", files);
 
 	for (const auto& fullPath : files)
 	{
+		// CONTENT_PATH 기준 상대경로 만들기
 		wstring relative = fullPath.substr(wcslen(CONTENT_PATH.c_str()));
 
-		Load<AFlipbook>(relative, relative);
+		// Load 및 AssetMgr에 자동 등록
+		Ptr<AMaterial> pMtrl = Load<AMaterial>(relative, relative);
+		if (pMtrl)
+			AddAsset(relative, pMtrl.Get());
 	}
 }
 

@@ -19,6 +19,7 @@ Menu::Menu()
 	, m_bCreateGameObjectWindow(false)
 	, m_bCollisionWindow(false)
 	, m_bLayerNameWindow(false)
+	, m_bCreateMaterialWindow(false)
 	, m_CollisionMatrix{}
 {
 }
@@ -59,6 +60,9 @@ void Menu::Tick()
 
 		if (m_bCreateFlipbookWindow)
 			CreateFlipbookWindow();
+
+		if (m_bCreateMaterialWindow)
+			CreateMaterialWindow();
 
 		ImGui::EndMainMenuBar();
 	}
@@ -203,9 +207,7 @@ void Menu::Asset()
 
 			if (ImGui::MenuItem("Create Material"))
 			{
-				Ptr<AMaterial> pMtrl = new AMaterial;
-				wstring Key = GetAssetName(ASSET_TYPE::MATERIAL, L"Material\\Default Material");
-				AssetMgr::GetInst()->AddAsset(Key, pMtrl.Get());				
+				m_bCreateMaterialWindow = true;
 			}
 
 			if (ImGui::MenuItem("Create Sprite"))
@@ -570,4 +572,59 @@ void Menu::UpdateayerNameEditorWindow()
 	}
 
 	ImGui::End();
+}
+
+void Menu::CreateMaterialWindow()
+{
+
+	static char matName[64] = "NewMaterial";
+	static char texName[64] = "TextureKey";
+
+	ImGui::Begin("Create Material", &m_bCreateMaterialWindow);
+
+	// 이름과 텍스처 입력
+	ImGui::InputText("Material Name", matName, IM_ARRAYSIZE(matName));
+	ImGui::InputText("Texture Key", texName, IM_ARRAYSIZE(texName));
+
+	if (ImGui::Button("Create"))
+	{
+		CreateMaterial(matName, texName);
+	}
+
+	ImGui::End();
+}
+
+void Menu::CreateMaterial(const char* matName, const char* texName)
+{
+	if (!matName || strlen(matName) == 0)
+		return;
+
+	Ptr<AMaterial> pMtrl = new AMaterial;
+
+	// 이름 설정
+	std::wstring wMatName(matName, matName + strlen(matName));
+	pMtrl->SetName(wMatName);
+
+	// 기본 셰이더 설정 (예제에서는 Std2DShader)
+	Ptr<AGraphicShader> pShader = AssetMgr::GetInst()->Find<AGraphicShader>(L"Std2DShader");
+	pMtrl->SetShader(pShader);
+
+	// 텍스처 설정
+	std::wstring wTexName(texName, texName + strlen(texName));
+	Ptr<ATexture> pTex = AssetMgr::GetInst()->Find<ATexture>(wTexName);
+	if (pTex)
+		pMtrl->SetTexture(TEX_0, pTex);
+
+	// 기본 파라미터
+	pMtrl->SetScalar(VEC4_0, Vec4(1.f, 1.f, 1.f, 1.f));
+
+	// 렌더링 도메인 설정
+	pMtrl->SetDomain(RENDER_DOMAIN::DOMAIN_MASKED);
+
+	// 에셋 등록
+	AssetMgr::GetInst()->AddAsset(wMatName, pMtrl.Get());
+
+	// 저장
+	std::wstring path = CONTENT_PATH + L"Material\\" + wMatName + L".mtrl";
+	pMtrl->Save(path);
 }

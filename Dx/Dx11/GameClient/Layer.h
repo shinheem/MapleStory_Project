@@ -21,6 +21,16 @@ public:
     const vector<Ptr<GameObject>>& GetParentObjects() { return m_vecParents; }
     vector<Ptr<GameObject>>& GetAllObjects() { return m_vecAllObjects; }
 
+    Ptr<GameObject> FindObject(const wstring& _Name)
+    {
+        for (auto& obj : m_vecParents)
+        {
+            if (obj->GetName() == _Name)
+                return obj;
+        }
+        return nullptr;
+    }
+
     Layer& operator=(const Layer& _Other)
     {
         if (this == &_Other) return *this;

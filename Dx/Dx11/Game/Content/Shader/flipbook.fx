@@ -9,6 +9,9 @@
 #define BackgroundUV    g_vec2_2
 #define OffsetUV        g_vec2_3
 
+#define RenderOffset (g_vec4_3.xy)
+#define RenderScale (g_vec4_3.zw)
+
 
 struct VS_IN
 {
@@ -20,14 +23,15 @@ struct VS_OUT
 {
     float4 vPosition : SV_Position; // 래스터라이져로 보낼때, NDC 좌표
     float2 vUV : TEXCOORD;
-    float3 vWorldPos : POSITION;    
+    float3 vWorldPos : POSITION;
 };
 
 VS_OUT VS_Flipbook(VS_IN _input)
 {
     VS_OUT output = (VS_OUT) 0.f;
-             
-    float4 vWorld = mul(float4(_input.vPos, 1.f), g_matWorld);
+    
+    float2 localXY = _input.vPos.xy * RenderScale + RenderOffset;
+    float4 vWorld = mul(float4(localXY, _input.vPos.z, 1.f), g_matWorld);
     float4 vView = mul(vWorld, g_matView);
     float4 vProj = mul(vView, g_matProj);
      
@@ -47,7 +51,7 @@ float4 PS_Flipbook(VS_OUT _input) : SV_Target
     if (g_btex_0)
     {
         float2 LeftTop = (LeftTopUV + SliceUV * 0.5f - BackgroundUV * 0.5f);
-        float2 SampleUV = LeftTop + BackgroundUV * _input.vUV - OffsetUV;        
+        float2 SampleUV = LeftTop + BackgroundUV * _input.vUV - OffsetUV;
         
         if (LeftTopUV.x <= SampleUV.x && SampleUV.x <= LeftTopUV.x + SliceUV.x
            && LeftTopUV.y <= SampleUV.y && SampleUV.y <= LeftTopUV.y + SliceUV.y)
@@ -55,14 +59,14 @@ float4 PS_Flipbook(VS_OUT _input) : SV_Target
             vColor = AtlasTex.Sample(g_sam_1, SampleUV);
         }
         else
-        {            
+        {
             vColor = float4(1.f, 1.f, 0.f, 1.f);
             //discard;
         }
         
         if (vColor.a == 0.f)
-            discard;        
-    }    
+            discard;
+    }
     
     // 물체가 받는 빛의 총량
     float3 LightColor = float3(0.f, 0.f, 0.f);

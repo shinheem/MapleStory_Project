@@ -42,7 +42,7 @@ public:
         m_AccTime = 0.f;
     }
 
-private:
+public:
     bool CheckFinish();
 
 public:

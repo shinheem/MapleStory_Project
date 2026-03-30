@@ -35,14 +35,13 @@ void RenderMgr::Progress()
 	
 	// 렌더링 시작전에 할 일
 	Render_Start();
+	CCamera* activeCam = nullptr;
 
 	if (m_UICam)
 	{
 		m_UICam->SortObject();
 		m_UICam->Render();
 	}
-
-	CCamera* activeCam = nullptr;
 
 	// 🔹 현재 사용할 월드 카메라 선택
 	if (LEVEL_STATE::PLAY == LevelMgr::GetInst()->GetLevelState())

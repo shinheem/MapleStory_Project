@@ -174,7 +174,7 @@ void Inspector::AddScriptUI()
     {
         static const vector<SCRIPT_TYPE> AllScripts = {
             BOSSPARTSCRIPT, CAMMOVESCRIPT, HONTAILBOSSSCRIPT,
-            MISSILESCRIPT, MONSTERSCRIPT, PLAYERSCRIPT
+            MISSILESCRIPT, MONSTERSCRIPT, PLAYERSCRIPT, INVENTORYSCRIPT
         };
 
         for (SCRIPT_TYPE type : AllScripts)

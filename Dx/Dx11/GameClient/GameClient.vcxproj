@@ -246,6 +246,7 @@ cd $(SolutionDir)</Command>
     <ClInclude Include="Source\Scripts\CBossPartScript.h" />
     <ClInclude Include="Source\Scripts\CCamMoveScript.h" />
     <ClInclude Include="Source\Scripts\CHonTailBossScript.h" />
+    <ClInclude Include="Source\Scripts\CInventoryScript.h" />
     <ClInclude Include="Source\Scripts\CMissileScript.h" />
     <ClInclude Include="Source\Scripts\CMonsterScript.h" />
     <ClInclude Include="Source\Scripts\CPlayerScript.h" />
@@ -344,6 +345,7 @@ cd $(SolutionDir)</Command>
     <ClCompile Include="Source\Scripts\CBossPartScript.cpp" />
     <ClCompile Include="Source\Scripts\CCamMoveScript.cpp" />
     <ClCompile Include="Source\Scripts\CHonTailBossScript.cpp" />
+    <ClCompile Include="Source\Scripts\CInventoryScript.cpp" />
     <ClCompile Include="Source\Scripts\CMissileScript.cpp" />
     <ClCompile Include="Source\Scripts\CMonsterScript.cpp" />
     <ClCompile Include="Source\Scripts\CPlayerScript.cpp" />

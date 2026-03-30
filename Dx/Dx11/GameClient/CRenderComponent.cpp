@@ -69,6 +69,9 @@ void CRenderComponent::SaveToLevelFile(FILE* _File)
 	SaveAssetRef(_File, m_Mesh.Get());
 	SaveAssetRef(_File, m_Mtrl.Get());
 	SaveAssetRef(_File, m_SharedMtrl.Get());
+
+	fwrite(&m_RenderOffset, sizeof(Vec2), 1, _File);
+	fwrite(&m_RenderScale, sizeof(Vec2), 1, _File);
 }
 
 void CRenderComponent::LoadFromLevelFile(FILE* _File)
@@ -76,4 +79,7 @@ void CRenderComponent::LoadFromLevelFile(FILE* _File)
 	m_Mesh = LoadAssetRef<AMesh>(_File);
 	m_Mtrl = LoadAssetRef<AMaterial>(_File);
 	m_SharedMtrl = LoadAssetRef<AMaterial>(_File);
+
+	fread(&m_RenderOffset, sizeof(Vec2), 1, _File);
+	fread(&m_RenderScale, sizeof(Vec2), 1, _File);
 }

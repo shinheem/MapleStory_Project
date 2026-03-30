@@ -11,6 +11,7 @@ GameObject::GameObject()
 	, m_Parent(nullptr)
 	, m_LayerIdx(-1)
 	, m_Dead(false)	
+	, m_Active(true)
 {
 }
 
@@ -20,6 +21,7 @@ GameObject::GameObject(const GameObject& _Origin)
 	, m_Parent(nullptr)
     , m_LayerIdx(-1)
     , m_Dead(false)
+	, m_Active(_Origin.m_Active)
 {
 	// 원본 오브젝트와 동일한 세팅의 컴포넌트를 복사해서 나한테 넣어준다.
 	for (UINT i = 0; i < (UINT)COMPONENT_TYPE::END; ++i)
@@ -140,12 +142,17 @@ void GameObject::RegisterLayer()
 
 void GameObject::Render()
 {
+
+	if (!m_Active)
+		return;
+
 	// 렌더링 관련 기능을 보유한 컴포넌트가 없으면 GameObejct 는 Rendering 될 수 없다.
-	if (nullptr != m_RenderCom)
+	if (nullptr != m_RenderCom )
 	{
 		Transform()->Binding();
 		m_RenderCom->Render();
 	}
+
 
 	for (size_t i = 0; i < m_vecChild.size(); ++i)
 	{

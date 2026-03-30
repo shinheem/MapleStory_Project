@@ -83,6 +83,13 @@ void CFlipbookRender::Render()
 		GetMaterial()->SetScalar(VEC2_1, pCurSprite->GetSliceUV());
 		GetMaterial()->SetScalar(VEC2_2, pCurSprite->GetBackgroundUV());
 		GetMaterial()->SetScalar(VEC2_3, pCurSprite->GetOffsetUV());
+
+		
+		// Render 전용 Offset 및 Scale 값 세팅
+		GetMaterial()->SetScalar(VEC4_3, Vec4(
+			GetRenderOffset().x, GetRenderOffset().y,
+			GetRenderScale().x, GetRenderScale().y));
+
 		GetMaterial()->Binding();
 	}
 

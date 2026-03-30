@@ -15,8 +15,6 @@ ContentUI::ContentUI()
 	m_Tree->AddDynamicSelect(this, (DELEGATE_1)&ContentUI::SelectAsset);
 	AddChildUI(m_Tree.Get());
 
-
-
 	// Asset 내용을 트리에 반영
 	Renew();
 }

@@ -14,6 +14,7 @@ enum class KEY
 	X,
 	C,
 	V,
+	I,
 
 	LBTN,
 	RBTN,

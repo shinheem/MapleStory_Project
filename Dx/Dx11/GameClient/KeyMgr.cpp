@@ -17,6 +17,7 @@ UINT g_KeyIndex[(UINT)KEY::KEY_END] =
 	'X',
 	'C',
 	'V',
+	'I',
 
 	VK_LBUTTON,
 	VK_RBUTTON,

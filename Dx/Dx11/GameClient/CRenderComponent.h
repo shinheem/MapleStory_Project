@@ -14,6 +14,11 @@ private:
     Ptr<AMaterial>      m_SharedMtrl;   // 공유 재질(에셋매니저의 관리를 받는..)
     Ptr<AMaterial>      m_DynamicMtrl;  // 나만의 동적 재질(쓰고 버리는..)
 
+private:
+
+    Vec2 m_RenderOffset{};
+    Vec2 m_RenderScale = Vec2(1.f, 1.f);
+
 public:
     GET_SET(Ptr<AMesh>, Mesh)
 
@@ -21,6 +26,9 @@ public:
     Ptr<AMaterial> GetMaterial() { return m_Mtrl; }
     Ptr<AMaterial> GetSharedMaterial();
 
+    GET_SET(Vec2, RenderOffset)
+    GET_SET(Vec2, RenderScale)
+        
 
 public:
     Ptr<AMaterial> CreateDynamicMaterial();

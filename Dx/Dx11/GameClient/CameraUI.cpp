@@ -103,9 +103,70 @@ void CameraUI::Tick_UI()
 
     ImGui::EndDisabled();
 
-    
-    float       m_Far;          // 카메라 시야 최대거리
-    float       m_Width;        // 직교투영 가로길이
-    float       m_AspectRatio;  // 종횡비 (가로 / 세로), 세로대비 가로의 길이 비율   
-    float       m_OrthoScale;   // 직교투영 배율
+    // =====
+// Far
+// =====
+    ImGui::Text("Far");
+    ImGui::SameLine(SameLine);
+
+    float Far = GetTarget()->Camera()->GetFar();
+    ImGui::SetNextItemWidth(200);
+
+    if (ImGui::DragFloat("##Far", &Far, 1.f, 1.f, 10000.f))
+    {
+        GetTarget()->Camera()->SetFar(Far);
+    }
+
+
+    // =================
+    // Orthographic 전용
+    // =================
+    ImGui::BeginDisabled(ProjType == PROJ_TYPE::PERSPECTIVE);
+
+    // Width
+    ImGui::Text("Width");
+    ImGui::SameLine(SameLine);
+
+    float Width = GetTarget()->Camera()->GetWidth();
+    ImGui::SetNextItemWidth(200);
+
+    if (ImGui::DragFloat("##Width", &Width, 0.1f))
+    {
+        GetTarget()->Camera()->SetWidth(Width);
+    }
+
+    // OrthoScale
+    ImGui::Text("OrthoScale");
+    ImGui::SameLine(SameLine);
+
+    float Scale = GetTarget()->Camera()->GetOrthoScale();
+    ImGui::SetNextItemWidth(200);
+
+    if (ImGui::DragFloat("##OrthoScale", &Scale, 0.1f))
+    {
+        GetTarget()->Camera()->SetOrthoScale(Scale);
+    }
+
+    ImGui::EndDisabled();
+
+
+    // =================
+    // Aspect Ratio
+    // =================
+    ImGui::Text("AspectRatio");
+    ImGui::SameLine(SameLine);
+
+    float Aspect = GetTarget()->Camera()->GetAspectRatio();
+    ImGui::SetNextItemWidth(200);
+
+    if (ImGui::DragFloat("##AspectRatio", &Aspect, 0.01f, 0.1f, 5.f))
+    {
+        GetTarget()->Camera()->SetAspectRatio(Aspect);
+    }
+
+    //
+    //float       m_Far;          // 카메라 시야 최대거리
+    //float       m_Width;        // 직교투영 가로길이
+    //float       m_AspectRatio;  // 종횡비 (가로 / 세로), 세로대비 가로의 길이 비율   
+    //float       m_OrthoScale;   // 직교투영 배율
 }

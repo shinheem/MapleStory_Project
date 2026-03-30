@@ -21,6 +21,7 @@ private:
     // -1 인 경우, 어떤 레이어에도 속하지 않는다 == 레벨안에 있지 않은 오브젝트
     int                     m_LayerIdx; 
     bool                    m_Dead;
+    bool                    m_Active;
 
 public:
     // 레벨이 처음 시작될때 호출되는 함수
@@ -45,6 +46,25 @@ public:
     vector<Ptr<CScript>> GetScripts() { return m_vecScripts; }
     void SetLayerIdx(int LayerIdx) { m_LayerIdx = LayerIdx; }
     int GetLayerIdx() { return m_LayerIdx; }
+    void SetActive(bool _Active) { 
+        m_Active = _Active; 
+
+        // 자식도 동일하게 적용
+        for (auto& Child : m_vecChild)
+        {
+            Child->SetActive(_Active);
+        }
+    }
+    bool IsActive() const
+    { 
+        if (!m_Active)
+            return false;
+
+        if (m_Parent)
+            return m_Parent->IsActive();
+
+        return true;
+    }
 
     template<typename T>
     Ptr<T> GetScript();

@@ -298,6 +298,9 @@
     <ClInclude Include="Source\Scripts\CHonTailBossScript.h">
       <Filter>Source\Scripts</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Scripts\CInventoryScript.h">
+      <Filter>Source\Scripts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="GameClient.ico">
@@ -799,9 +802,6 @@
     <ClCompile Include="Source\Scripts\CCamMoveScript.cpp">
       <Filter>Source\Scripts</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Scripts\CMissileScript.cpp">
-      <Filter>Source\Scripts</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Scripts\CMonsterScript.cpp">
       <Filter>Source\Scripts</Filter>
     </ClCompile>
@@ -821,6 +821,12 @@
       <Filter>Source\Scripts</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scripts\CHonTailBossScript.cpp">
+      <Filter>Source\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scripts\CInventoryScript.cpp">
+      <Filter>Source\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scripts\CMissileScript.cpp">
       <Filter>Source\Scripts</Filter>
     </ClCompile>
   </ItemGroup>

@@ -13,6 +13,8 @@
 CCamera::CCamera()
 	: Component(COMPONENT_TYPE::CAMERA)
 	, m_LayerCheck(0)
+	, m_ProjType(PROJ_TYPE::PERSPECTIVE)
+	, m_Far(1000.f)                     
 	, m_OrthoScale(1.f)
 	, m_Width(10.f)
 	, m_AspectRatio(16.f / 9.f)
