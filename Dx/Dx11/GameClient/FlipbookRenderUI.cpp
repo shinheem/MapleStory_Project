@@ -70,6 +70,18 @@ void FlipbookRenderUI::Tick_UI()
         pUI->AddDelegate(this, (DELEGATE_1)&FlipbookRenderUI::SelectFlipbook); // 기존 DELEGATE_1 사용
         pUI->SetActive(true);
     }
+
+    Ptr<CFlipbookRender> pFlipbookRender2 = GetTarget()->FlipbookRender();
+    if (!pFlipbookRender2) return;
+
+    pFlipbookRender2->SetFlipbook(m_CurIdx, pFlipbookRender2->GetFlipbook(m_CurIdx));
+
+    FlipbookRenderData* pData = pFlipbookRender2->GetRenderData(m_CurIdx);
+    if (!pData) return;
+
+    ImGui::DragFloat2("Offset", &pData->Offset.x, 0.001f);
+    ImGui::DragFloat2("Scale", &pData->Scale.x, 0.001f);
+
 }
 
 void FlipbookRenderUI::SelectFlipbook(DWORD_PTR _ListUI)

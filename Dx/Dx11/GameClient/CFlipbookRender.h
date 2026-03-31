@@ -3,11 +3,18 @@
 
 #include "AFlipbook.h"
 
+struct FlipbookRenderData
+{
+    Vec2 Offset;
+    Vec2 Scale;
+};
+
 class CFlipbookRender :
     public CRenderComponent
 {
 private:
     vector<Ptr<AFlipbook>>  m_vecFlipbook;
+    vector<FlipbookRenderData>    m_vecRenderData;
 
     int                     m_CurFlipbook;
     int                     m_CurSprite;
@@ -18,6 +25,14 @@ private:
     float                   m_AccTime;
 
 public:
+    FlipbookRenderData* GetRenderData(int _Idx)
+    {
+        if (_Idx < 0 || _Idx >= (int)m_vecRenderData.size())
+            return nullptr;
+
+        return &m_vecRenderData[_Idx];
+    }
+
     Ptr<AFlipbook> GetFlipbook(int _Idx)
     {
         if (_Idx < 0 || _Idx >= (int)m_vecFlipbook.size())
@@ -29,10 +44,24 @@ public:
     {
         if (m_vecFlipbook.size() <= _Idx)
             m_vecFlipbook.resize(_Idx + 1);
+
+        if (m_vecRenderData.size() <= _Idx)
+            m_vecRenderData.resize(_Idx + 1, FlipbookRenderData{ Vec2(0,0), Vec2(1,1) });
+
         m_vecFlipbook[_Idx] = _Flipbook;
     }
 
-    void AddFlipbook(Ptr<AFlipbook> _Flipbook) { m_vecFlipbook.push_back(_Flipbook); }
+    void AddFlipbook(Ptr<AFlipbook> _Flipbook) 
+    { 
+         m_vecFlipbook.push_back(_Flipbook); 
+
+         FlipbookRenderData data;
+
+         data.Offset = Vec2(0.f, 0.f);
+         data.Scale = Vec2(1.f, 1.f);
+
+         m_vecRenderData.push_back(data);
+    }
 
     void Play(int _FlipbookIdx, float _FPS, int _RepeatCount)
     {

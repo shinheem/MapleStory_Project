@@ -75,6 +75,13 @@ void CFlipbookRender::Render()
 	if (nullptr == pCurSprite)
 		return;
 
+	if (m_CurFlipbook >= 0 && m_CurFlipbook < (int)m_vecRenderData.size())
+	{
+		const FlipbookRenderData& data = m_vecRenderData[m_CurFlipbook];
+		SetRenderOffset(data.Offset);
+		SetRenderScale(data.Scale);
+	}
+
 	// Material과 Mesh 바인딩
 	if (nullptr != GetMaterial())
 	{
@@ -172,6 +179,11 @@ void CFlipbookRender::SaveToLevelFile(FILE* _File)
 	fwrite(&m_CurSprite, sizeof(int), 1, _File);
 	fwrite(&m_FPS, sizeof(int), 1, _File);
 	fwrite(&m_RepeatCount, sizeof(int), 1, _File);
+
+	// Save
+	size_t count = m_vecRenderData.size();
+	fwrite(&count, sizeof(size_t), 1, _File);
+	fwrite(m_vecRenderData.data(), sizeof(FlipbookRenderData), count, _File);
 }
 
 void CFlipbookRender::LoadFromLevelFile(FILE* _File)
@@ -190,4 +202,10 @@ void CFlipbookRender::LoadFromLevelFile(FILE* _File)
 	fread(&m_CurSprite, sizeof(int), 1, _File);
 	fread(&m_FPS, sizeof(int), 1, _File);
 	fread(&m_RepeatCount, sizeof(int), 1, _File);
+
+	// Load
+	size_t count = 0;
+	fread(&count, sizeof(size_t), 1, _File);
+	m_vecRenderData.resize(count);
+	fread(m_vecRenderData.data(), sizeof(FlipbookRenderData), count, _File);
 }
