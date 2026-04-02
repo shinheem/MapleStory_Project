@@ -21,12 +21,14 @@ private:
 
     UINT                 m_Jump_Count;
 
+    float                m_fGetSpeed;    // 빨려 들어가는 속도
     float                m_Limit;
     float                m_Speed;
     float                m_fJumpVelocity;
     float                m_fGravity;
     float                m_DropTimer;    // 발판 무시 시간
 
+    bool                 m_bGet;         // 습득 중인지 여부
     bool                 m_bDropDown;     // 아랫점프
     bool                 m_bJump;
     bool                 m_bWalk;
@@ -38,6 +40,7 @@ private:
 
 public:
     void SetTarget(Ptr<GameObject> _Target) { m_Target = _Target; }
+    void ItemCollect();
 
 public:
     virtual void Init() override;

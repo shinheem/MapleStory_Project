@@ -77,6 +77,7 @@ public:
 
     Ptr<GameObject> GetParent() { return m_Parent; }
     Ptr<GameObject> GetChild(int _idx) { return m_vecChild[_idx]; }
+    vector<Ptr<GameObject>> GetChilds() { return m_vecChild; }
     const vector<Ptr<GameObject>>& GetChild() { return m_vecChild; }
 
     bool IsDead() { return m_Dead; }
@@ -103,7 +104,7 @@ private:
     void RegisterLayer();
 
 public:
-    CLONE(GameObject);
+    CLONE(GameObject)
 
 public:
     GameObject();

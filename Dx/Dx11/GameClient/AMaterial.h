@@ -17,7 +17,7 @@ public:
     void SetShader(Ptr<AGraphicShader> _Shader) { m_Shader = _Shader;  }
     Ptr<AGraphicShader> GetShader() { return m_Shader; }
 
-    GET_SET(RENDER_DOMAIN, Domain);
+    GET_SET(RENDER_DOMAIN, Domain)
 
     void SetTexture(TEX_PARAM _Param, Ptr<ATexture> _Texture) { m_Tex[_Param] = _Texture; } 
     Ptr<ATexture> GetTexture(TEX_PARAM _Param) { return  m_Tex[_Param]; }

@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "CPlayerScript.h"
+#include "CItemScript.h"
+#include "CMissileScript.h"
+#include "CInventoryScript.h"
 
 #include "KeyMgr.h"
 #include "TimeMgr.h"
@@ -8,7 +11,6 @@
 #include "CTransform.h"
 #include "GameObject.h"
 #include "CCollider2D.h"
-#include "CMissileScript.h"
 
 #include "AssetMgr.h"
 #include "LevelMgr.h"
@@ -68,6 +70,8 @@ void CPlayerScript::Tick()
 	Change_State();
 
 	Shoot();
+
+	ItemCollect(); // 아이템 수집 체크 함수
 }
 
 void CPlayerScript::Change_State()
@@ -214,6 +218,34 @@ void CPlayerScript::Change_State()
 	Transform()->SetRelativeRot(vRotation);
 }
 
+void CPlayerScript::ItemCollect()
+{
+	if (KEY_TAP(KEY::Z) || KEY_PRESSED(KEY::Z))
+	{
+		// 1. 레이어 번호를 직접 숫자로 넣어서 테스트해보세요 (아이템 레이어가 3번이라고 가정)
+		// LAYER_TYPE::Layer_Item이 실제 엔진 레이어 설정과 맞는지 꼭 확인!
+		Layer* pItemLayer = LevelMgr::GetInst()->GetCurLevel()->GetLayer((int)LAYER_TYPE::Layer_Item);
+		const vector<Ptr<GameObject>>& vecItems = pItemLayer->GetParentObjects();
+
+		Vec3 vPlayerPos = Transform()->GetRelativePos();
+
+		for (size_t i = 0; i < vecItems.size(); ++i)
+		{
+			float fDist = Vec3::Distance(vPlayerPos, vecItems[i]->Transform()->GetRelativePos());
+
+			// 2. 판정 거리를 500으로 대폭 늘려서 테스트!
+			if (fDist < 500.f)
+			{
+				Ptr<CItemScript> pItemScript = vecItems[i]->GetScript<CItemScript>();
+				if (nullptr != pItemScript)
+				{
+					pItemScript->GetItem(GetOwner());
+				}
+			}
+		}
+	}
+}
+
 void CPlayerScript::Shoot()
 {
 	if (KEY_TAP(KEY::SPACE))
@@ -258,7 +290,7 @@ void CPlayerScript::Shoot()
 	}	
 }
 
-void CPlayerScript::OnBeginOverlap(CCollider2D* _MyCol, CCollider2D* _OtherCol)
+void CPlayerScript::OnBeginOverlap(CCollider2D* _MyCol, CCollider2D* _OtherCol) 
 {
 }
 
@@ -294,6 +326,7 @@ void CPlayerScript::OnOverlap(CCollider2D* _MyCol, CCollider2D* _OtherCol)
 		}
 
 	}
+	// ===== 발판 착지 =====
 
 	// ===== Rope 처리 =====
 	if (Other->GetName() == L"Rope")
@@ -322,8 +355,8 @@ void CPlayerScript::OnOverlap(CCollider2D* _MyCol, CCollider2D* _OtherCol)
 				vPos.y -= m_Speed * DT;
 		}
 	}
-
 	Transform()->SetRelativePos(vPos);
+	// ===== Rope 처리 =====
 }
 
 void CPlayerScript::OnEndOverlap(CCollider2D* _MyCol, CCollider2D* _OtherCol)

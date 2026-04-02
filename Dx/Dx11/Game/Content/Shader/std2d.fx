@@ -5,6 +5,7 @@
 
 #define TintColor g_vec4_0
 
+
 struct VS_IN
 {
     float3 vPos     : POSITION; // Sementic : Layout 에서 설명한 이름       
@@ -67,8 +68,5 @@ float4 PS_Std2D(VS_OUT _input) : SV_Target
     
     return vColor;
 }
-
-
-
 
 #endif

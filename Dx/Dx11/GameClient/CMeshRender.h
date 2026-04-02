@@ -14,7 +14,7 @@ public:
     virtual void CreateMaterial() override {}
 
 
-    CLONE(CMeshRender);
+    CLONE(CMeshRender)
 public:
     CMeshRender();
     virtual ~CMeshRender();

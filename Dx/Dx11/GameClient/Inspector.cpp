@@ -15,6 +15,8 @@
 #include "Source\Scripts\CMissileScript.h"
 #include "Source\Scripts\CMonsterScript.h"
 #include "Source\Scripts\CPlayerScript.h"
+#include "Source\Scripts\CInventoryScript.h"
+#include "Source\Scripts\CGaugeBarScript.h"
 
 Inspector::Inspector()
     : EditorUI("Inspector")
@@ -174,12 +176,13 @@ void Inspector::AddScriptUI()
     {
         static const vector<SCRIPT_TYPE> AllScripts = {
             BOSSPARTSCRIPT, CAMMOVESCRIPT, HONTAILBOSSSCRIPT,
-            MISSILESCRIPT, MONSTERSCRIPT, PLAYERSCRIPT, INVENTORYSCRIPT
+            MISSILESCRIPT, MONSTERSCRIPT, PLAYERSCRIPT, 
+            INVENTORYSCRIPT, GAUGEBARSCRIPT, SLOTSCRIPT,
+            ITEMSCRIPT
         };
 
         for (SCRIPT_TYPE type : AllScripts)
         {
-            // 🚩 [수정] 객체를 생성하지 않고 타입으로 이름만 가져옵니다.
             const wchar_t* pWName = ScriptMgr::GetScriptNameByType(type);
             wstring WName = pWName ? pWName : L"Unknown";
             string strName(WName.begin(), WName.end());

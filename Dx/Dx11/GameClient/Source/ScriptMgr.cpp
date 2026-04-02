@@ -8,6 +8,9 @@
 #include "Scripts/CMonsterScript.h"
 #include "Scripts/CPlayerScript.h"
 #include "Scripts/CInventoryScript.h"
+#include "Scripts/CGaugeBarScript.h"
+#include "Scripts/CSlotScript.h"
+#include "Scripts/CItemScript.h"
 
 void ScriptMgr::GetScriptInfo(vector<wstring>& _vec)
 {
@@ -18,6 +21,9 @@ void ScriptMgr::GetScriptInfo(vector<wstring>& _vec)
 	_vec.push_back(L"CMonsterScript");
 	_vec.push_back(L"CPlayerScript");
 	_vec.push_back(L"CInventoryScript");
+	_vec.push_back(L"CGaugeBarScript");
+	_vec.push_back(L"CSlotScript");
+	_vec.push_back(L"CItemScript");
 }
 
 CScript * ScriptMgr::GetScript(const wstring& _strScriptName)
@@ -36,6 +42,12 @@ CScript * ScriptMgr::GetScript(const wstring& _strScriptName)
 		return new CPlayerScript; 
 	if (L"CInventoryScript" == _strScriptName)
 		return new CInventoryScript;
+	if (L"CGaugeBarScript" == _strScriptName)
+		return new CGaugeBarScript;
+	if (L"CSlotScript" == _strScriptName)
+		return new CSlotScript;
+	if (L"CItemScript" == _strScriptName)
+		return new CItemScript;
 	return nullptr;
 }
 
@@ -63,6 +75,15 @@ CScript * ScriptMgr::GetScript(UINT _iScriptType)
 		break;
 	case (UINT)SCRIPT_TYPE::INVENTORYSCRIPT:
 		return new CInventoryScript;
+		break;
+	case (UINT)SCRIPT_TYPE::GAUGEBARSCRIPT:
+		return new CGaugeBarScript;
+		break;
+	case (UINT)SCRIPT_TYPE::SLOTSCRIPT:
+		return new CSlotScript;
+		break;
+	case (UINT)SCRIPT_TYPE::ITEMSCRIPT:
+		return new CItemScript;
 		break;
 	}
 	return nullptr;
@@ -95,10 +116,22 @@ const wchar_t * ScriptMgr::GetScriptName(CScript * _pScript)
 	case SCRIPT_TYPE::PLAYERSCRIPT:
 		return L"CPlayerScript";
 		break;
+
 	case SCRIPT_TYPE::INVENTORYSCRIPT:
 		return L"CInventoryScript";
 		break;
 
+	case SCRIPT_TYPE::GAUGEBARSCRIPT:
+		return L"CGaugeBarScript";
+		break;
+
+	case SCRIPT_TYPE::SLOTSCRIPT:
+		return L"CSlotScript";
+		break;
+
+	case SCRIPT_TYPE::ITEMSCRIPT:
+		return L"CItemScript";
+		break;
 	}
 	return nullptr;
 }
@@ -120,6 +153,12 @@ const wchar_t* ScriptMgr::GetScriptNameByType(SCRIPT_TYPE type)
 		return L"CPlayerScript";
 	case SCRIPT_TYPE::INVENTORYSCRIPT:
 		return L"CInventoryScript";
+	case SCRIPT_TYPE::GAUGEBARSCRIPT:
+		return L"CGaugeBarScript";
+	case SCRIPT_TYPE::SLOTSCRIPT:
+		return L"CSlotScript";
+	case SCRIPT_TYPE::ITEMSCRIPT:
+		return L"CItemScript";
 	default:
 		return nullptr;
 	}

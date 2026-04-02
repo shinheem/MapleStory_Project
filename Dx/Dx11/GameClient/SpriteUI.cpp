@@ -99,10 +99,10 @@ void SpriteUI::Tick_UI()
 	{		
 		if (IsAtlas)
 		{
-			int pixel[2] = { LeftTopUV.x * (float)pAtlas->GetWidth()
-						  ,  LeftTopUV.y * (float)pAtlas->GetHeight() };
+			float pixel[2] = { (float)LeftTopUV.x * (float)pAtlas->GetWidth()
+						  ,  (float)LeftTopUV.y * (float)pAtlas->GetHeight() };
 
-			if (ImGui::InputInt2("##LeftTop", pixel))
+			if (ImGui::InputFloat2("##LeftTop", pixel))
 			{
 				pSprite->SetLeftTopUV(Vec2((float)pixel[0] / (float)pAtlas->GetWidth() 
 										 , (float)pixel[1] / (float)pAtlas->GetHeight()));
@@ -121,10 +121,10 @@ void SpriteUI::Tick_UI()
 	{		
 		if (IsAtlas)
 		{
-			int pixel[2] = { SliceUV.x * (float)pAtlas->GetWidth()
-						  ,  SliceUV.y * (float)pAtlas->GetHeight() };
+			float pixel[2] = { (float)SliceUV.x * (float)pAtlas->GetWidth()
+						  ,  (float)SliceUV.y * (float)pAtlas->GetHeight() };
 
-			if (ImGui::InputInt2("##Slice", pixel))
+			if (ImGui::InputFloat2("##Slice", pixel))
 			{
 				pSprite->SetSliceUV(Vec2((float)pixel[0] / (float)pAtlas->GetWidth() 
 									   , (float)pixel[1] / (float)pAtlas->GetHeight()));
@@ -144,10 +144,10 @@ void SpriteUI::Tick_UI()
 	{		
 		if (IsAtlas)
 		{
-			int pixel[2] = { BackgroundUV.x * (float)pAtlas->GetWidth()
-						  ,  BackgroundUV.y * (float)pAtlas->GetHeight() };
+			float pixel[2] = { (float)BackgroundUV.x * (float)pAtlas->GetWidth()
+						  ,  (float)BackgroundUV.y * (float)pAtlas->GetHeight() };
 
-			if (ImGui::InputInt2("##Background", pixel))
+			if (ImGui::InputFloat2("##Background", pixel))
 			{
 				pSprite->SetBackgroundUV(Vec2((float)pixel[0] / (float)pAtlas->GetWidth() 
 										    , (float)pixel[1] / (float)pAtlas->GetHeight()));
@@ -166,10 +166,10 @@ void SpriteUI::Tick_UI()
 	{		
 		if (IsAtlas)
 		{
-			int pixel[2] = { OffsetUV.x * (float)pAtlas->GetWidth()
-						  ,  OffsetUV.y * (float)pAtlas->GetHeight() };
+			float pixel[2] = { (float)OffsetUV.x * (float)pAtlas->GetWidth()
+						  ,  (float)OffsetUV.y * (float)pAtlas->GetHeight() };
 
-			if (ImGui::InputInt2("##Offset", pixel))
+			if (ImGui::InputFloat2("##Offset", pixel))
 			{
 				pSprite->SetOffsetUV(Vec2((float)pixel[0] / (float)pAtlas->GetWidth() 
 										, (float)pixel[1] / (float)pAtlas->GetHeight()));

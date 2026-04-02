@@ -11,6 +11,8 @@ void AssetMgr::Init()
 
 	LoadAllSprites();
 
+	LoadAllFlipBooks();
+
 	LoadAllMaterials();
 
 	CreateEngineTexture();
@@ -192,6 +194,35 @@ void AssetMgr::CreateEngineShader()
 	pShader->SetRSType(RS_TYPE::CULL_NONE);
 	AssetMgr::GetInst()->AddAsset(pShader->GetName(), pShader.Get());
 
+	// ===========
+	// GaugeBar
+	// ===========
+	pShader = new AGraphicShader;
+	pShader->CreateVertexShader(L"Shader\\GaugeBar.fx", "VS_Std2D");
+	pShader->CreatePixelShader(L"Shader\\GaugeBar.fx", "PS_Std2D");
+	pShader->SetRSType(RS_TYPE::CULL_NONE);
+
+	pShader->AddShaderParam(SHADER_PARAM::VEC4, 0, L"TintColor");
+	pShader->AddShaderParam(SHADER_PARAM::TEX, 0, L"OutColor");
+	pShader->AddShaderParam(SHADER_PARAM::FLOAT, 0, L"FillRatio");
+
+	AddAsset(L"GaugeBar", pShader.Get());
+
+
+	// ===========
+	// Item
+	// ===========
+	pShader = new AGraphicShader;
+	pShader->CreateVertexShader(L"Shader\\Item.fx", "VS_Std2D");
+	pShader->CreatePixelShader(L"Shader\\Item.fx", "PS_Std2D");
+	pShader->SetRSType(RS_TYPE::CULL_NONE);
+
+	pShader->AddShaderParam(SHADER_PARAM::VEC4, 0, L"TintColor");
+	pShader->AddShaderParam(SHADER_PARAM::TEX, 0, L"OutColor");
+	pShader->AddShaderParam(SHADER_PARAM::FLOAT, 0, L"ItemAlpha");
+
+	AddAsset(L"Item", pShader.Get());
+
 	// =============
 	// TileMapShader
 	// =============
@@ -291,6 +322,25 @@ void AssetMgr::CreateEngineTexture()
 
 	Load<ATexture>(L"Maple_SkillquickSlotBack", L"Texture\\MapleStory_UI\\BottomUI\\SkillquickSlotBack.png");
 
+	Load<ATexture>(L"Equip_Btn_Off", L"Texture\\MapleStory_UI\\InventoryUI\\Bt_Inven0_0_Off.png");
+
+	Load<ATexture>(L"Consum_Btn_Off", L"Texture\\MapleStory_UI\\InventoryUI\\Bt_Inven1_0_Off.png");
+
+	Load<ATexture>(L"Etc_Btn_Off", L"Texture\\MapleStory_UI\\InventoryUI\\Bt_Inven2_0_Off.png");
+
+	Load<ATexture>(L"Install_Btn_Off", L"Texture\\MapleStory_UI\\InventoryUI\\Bt_Inven3_0_Off.png");
+
+	Load<ATexture>(L"Cash_Btn_Off", L"Texture\\MapleStory_UI\\InventoryUI\\Bt_Inven4_0_Off.png");
+
+	Load<ATexture>(L"Equip_Btn_On", L"Texture\\MapleStory_UI\\InventoryUI\\Bt_Inven0_1_On.png");
+
+	Load<ATexture>(L"Consum_Btn_On", L"Texture\\MapleStory_UI\\InventoryUI\\Bt_Inven1_1_On.png");
+
+	Load<ATexture>(L"Etc_Btn_On", L"Texture\\MapleStory_UI\\InventoryUI\\Bt_Inven2_1_On.png");
+
+	Load<ATexture>(L"Install_Btn_On", L"Texture\\MapleStory_UI\\InventoryUI\\Bt_Inven3_1_On.png");
+
+	Load<ATexture>(L"Cash_Btn_On", L"Texture\\MapleStory_UI\\InventoryUI\\Bt_Inven4_1_On.png");
 }
 
 void AssetMgr::CreateEngineMaterial()
@@ -298,7 +348,7 @@ void AssetMgr::CreateEngineMaterial()
 	Ptr<AMaterial> pMtrl = nullptr;
 
 	// =========
-	// Std2DMtrl
+	// Std2DMtrl 
 	// =========
 	pMtrl = new AMaterial;
 	pMtrl->SetName(L"Std2DMtrl");
@@ -404,6 +454,20 @@ void AssetMgr::LoadAllSprites()
 		wstring relative = fullPath.substr(wcslen(CONTENT_PATH.c_str()));
 
 		Load<ASprite>(relative, relative);
+	}
+}
+
+void AssetMgr::LoadAllFlipBooks()
+{
+	vector<wstring> files;
+	PathMgr::GetInst()->GetFiles(CONTENT_PATH + L"Flipbook\\", L".flip", files);
+
+	for (const auto& fullPath : files)
+	{
+		// CONTENT_PATH 기준 상대경로 만들기
+		wstring relative = fullPath.substr(wcslen(CONTENT_PATH.c_str()));
+
+		Load<AFlipbook>(relative, relative);
 	}
 }
 

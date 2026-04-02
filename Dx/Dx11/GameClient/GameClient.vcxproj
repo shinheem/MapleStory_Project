@@ -220,6 +220,7 @@ cd $(SolutionDir)</Command>
     <ClInclude Include="ImGui\imstb_textedit.h" />
     <ClInclude Include="ImGui\imstb_truetype.h" />
     <ClInclude Include="Inspector.h" />
+    <ClInclude Include="ItemMgr.h" />
     <ClInclude Include="KeyMgr.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="LevelMgr.h" />
@@ -245,11 +246,14 @@ cd $(SolutionDir)</Command>
     <ClInclude Include="Source\ScriptMgr.h" />
     <ClInclude Include="Source\Scripts\CBossPartScript.h" />
     <ClInclude Include="Source\Scripts\CCamMoveScript.h" />
+    <ClInclude Include="Source\Scripts\CGaugeBarScript.h" />
     <ClInclude Include="Source\Scripts\CHonTailBossScript.h" />
     <ClInclude Include="Source\Scripts\CInventoryScript.h" />
+    <ClInclude Include="Source\Scripts\CItemScript.h" />
     <ClInclude Include="Source\Scripts\CMissileScript.h" />
     <ClInclude Include="Source\Scripts\CMonsterScript.h" />
     <ClInclude Include="Source\Scripts\CPlayerScript.h" />
+    <ClInclude Include="Source\Scripts\CSlotScript.h" />
     <ClInclude Include="SpriteRenderUI.h" />
     <ClInclude Include="SpriteUI.h" />
     <ClInclude Include="struct.h" />
@@ -317,6 +321,7 @@ cd $(SolutionDir)</Command>
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Inspector.cpp" />
     <ClCompile Include="Inspector_Init.cpp" />
+    <ClCompile Include="ItemMgr.cpp" />
     <ClCompile Include="KeyMgr.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="LevelMgr.cpp" />
@@ -344,11 +349,14 @@ cd $(SolutionDir)</Command>
     <ClCompile Include="Source\ScriptMgr.cpp" />
     <ClCompile Include="Source\Scripts\CBossPartScript.cpp" />
     <ClCompile Include="Source\Scripts\CCamMoveScript.cpp" />
+    <ClCompile Include="Source\Scripts\CGaugeBarScript.cpp" />
     <ClCompile Include="Source\Scripts\CHonTailBossScript.cpp" />
     <ClCompile Include="Source\Scripts\CInventoryScript.cpp" />
+    <ClCompile Include="Source\Scripts\CItemScript.cpp" />
     <ClCompile Include="Source\Scripts\CMissileScript.cpp" />
     <ClCompile Include="Source\Scripts\CMonsterScript.cpp" />
     <ClCompile Include="Source\Scripts\CPlayerScript.cpp" />
+    <ClCompile Include="Source\Scripts\CSlotScript.cpp" />
     <ClCompile Include="SpriteRenderUI.cpp" />
     <ClCompile Include="SpriteUI.cpp" />
     <ClCompile Include="StructuredBuffer.cpp" />
@@ -391,6 +399,18 @@ cd $(SolutionDir)</Command>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="func.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="GaugeBar.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Item.fx">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>

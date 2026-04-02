@@ -21,7 +21,7 @@ int APIENTRY wWinMain(_In_      HINSTANCE hInstance,
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
     // 누수 발생지점 중단점 걸어주는 기능
-    //_CrtSetBreakAlloc(5068385);
+    //_CrtSetBreakAlloc(261337);
 
     hInst = hInstance;
 

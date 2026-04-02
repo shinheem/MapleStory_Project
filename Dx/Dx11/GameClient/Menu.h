@@ -24,7 +24,7 @@ private:
 
 public:
     void CreateSpriteWindow();
-    void CreateSpriteFromTexture(const char* texKey, int sliceX, int sliceY, int count);
+    void CreateSpriteFromTexture(const char* texKey, float sliceX, float sliceY, int count);
     void CreateFlipbookWindow();
     void CreateGameObjectWindow();
     void CreateMaterialWindow();

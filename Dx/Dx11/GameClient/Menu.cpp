@@ -285,13 +285,13 @@ void Menu::CreateSpriteWindow()
 	ImGui::Begin("Create Sprite", &m_bCreateSpriteWindow);
 
 	static char texKey[64] = "";
-	static int sliceX = 64;
-	static int sliceY = 64;
+	static float sliceX = 64;
+	static float sliceY = 64;
 	static int count = 1;
 
 	ImGui::InputText("Texture Key", texKey, 64);
-	ImGui::InputInt("Slice X", &sliceX);
-	ImGui::InputInt("Slice Y", &sliceY);
+	ImGui::InputFloat("Slice X", &sliceX);
+	ImGui::InputFloat("Slice Y", &sliceY);
 	ImGui::InputInt("Count", &count);
 
 	if (ImGui::Button("Create"))
@@ -303,7 +303,7 @@ void Menu::CreateSpriteWindow()
 }
 
 	
-void Menu::CreateSpriteFromTexture(const char* texKey, int sliceX, int sliceY, int count)
+void Menu::CreateSpriteFromTexture(const char* texKey, float sliceX, float sliceY, int count)
 {
 	wstring wTexKey(texKey, texKey + strlen(texKey));
 
@@ -314,7 +314,7 @@ void Menu::CreateSpriteFromTexture(const char* texKey, int sliceX, int sliceY, i
 	float width = pTex->GetWidth();
 	float height = pTex->GetHeight();
 
-	Vec2 slicePixel = Vec2((float)sliceX, (float)sliceY);
+	Vec2 slicePixel = Vec2(sliceX, sliceY);
 
 	for (int i = 0; i < count; ++i)
 	{

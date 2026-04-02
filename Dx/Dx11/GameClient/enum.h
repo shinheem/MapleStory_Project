@@ -20,6 +20,7 @@ enum class LAYER_TYPE
 	Layer_PlayerProjectile,
 	Layer_Enemy,
 	Layer_EnemyProjectile,
+	Layer_Item,
 };
 
 enum class RS_TYPE
@@ -189,4 +190,24 @@ enum class LEVEL_STATE
 	PLAY,
 	PAUSE,
 	STOP,
+};
+
+enum class ITEM_TYPE
+{
+	EQUIP,      // 0: 장비
+	CONSUME,    // 1: 소비
+	ETC,        // 2: 기타
+	INSTALL,    // 3: 설치
+
+	END,
+};
+
+enum class INVEN_TYPE
+{
+	EQUIP,      // 장비
+	CONSUME,    // 소비
+	ETC,        // 기타
+	INSTALL,    // 설치
+	CASH,       // 캐시
+	END,
 };

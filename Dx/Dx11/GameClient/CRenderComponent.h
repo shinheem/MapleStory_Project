@@ -22,7 +22,7 @@ private:
 public:
     GET_SET(Ptr<AMesh>, Mesh)
 
-        void SetMaterial(Ptr<AMaterial> _Mtrl);
+    void SetMaterial(Ptr<AMaterial> _Mtrl);
     Ptr<AMaterial> GetMaterial() { return m_Mtrl; }
     Ptr<AMaterial> GetSharedMaterial();
 

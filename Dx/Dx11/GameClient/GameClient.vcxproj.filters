@@ -301,6 +301,18 @@
     <ClInclude Include="Source\Scripts\CInventoryScript.h">
       <Filter>Source\Scripts</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Scripts\CGaugeBarScript.h">
+      <Filter>Source\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scripts\CSlotScript.h">
+      <Filter>Source\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scripts\CItemScript.h">
+      <Filter>Source\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemMgr.h">
+      <Filter>GameEngine\03. Manager\10. ItemMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="GameClient.ico">
@@ -553,6 +565,9 @@
     </Filter>
     <Filter Include="GameEngine\04. Asset\09. Prefab">
       <UniqueIdentifier>{91896e39-e5bc-4035-a1ee-1511ced630b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameEngine\03. Manager\10. ItemMgr">
+      <UniqueIdentifier>{a940ea9f-8379-4dc0-9aee-8a2054f87f37}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -829,6 +844,18 @@
     <ClCompile Include="Source\Scripts\CMissileScript.cpp">
       <Filter>Source\Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Scripts\CGaugeBarScript.cpp">
+      <Filter>Source\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scripts\CSlotScript.cpp">
+      <Filter>Source\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scripts\CItemScript.cpp">
+      <Filter>Source\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemMgr.cpp">
+      <Filter>GameEngine\03. Manager\10. ItemMgr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath.inl">
@@ -862,6 +889,12 @@
     </FxCompile>
     <FxCompile Include="func.fx">
       <Filter>HLSL\1. Header</Filter>
+    </FxCompile>
+    <FxCompile Include="GaugeBar.fx">
+      <Filter>HLSL\2. Render\2D</Filter>
+    </FxCompile>
+    <FxCompile Include="Item.fx">
+      <Filter>HLSL\2. Render\2D</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
