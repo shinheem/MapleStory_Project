@@ -4,17 +4,19 @@
 #include "CMissileScript.h"
 #include "CInventoryScript.h"
 
-#include "KeyMgr.h"
-#include "TimeMgr.h"
-#include "RenderMgr.h"
+#include "../../KeyMgr.h"
+#include "../../TimeMgr.h"
+#include "../../RenderMgr.h"
+#include "../../ItemMgr.h"
+#include "../../AssetMgr.h"
+#include "../../LevelMgr.h"
+#include "../../TaskMgr.h"
 
 #include "CTransform.h"
 #include "GameObject.h"
 #include "CCollider2D.h"
 
-#include "AssetMgr.h"
-#include "LevelMgr.h"
-#include "TaskMgr.h"
+
 
 CPlayerScript::CPlayerScript()
 	: CScript(SCRIPT_TYPE::PLAYERSCRIPT)
@@ -63,15 +65,71 @@ void CPlayerScript::Begin()
 
 void CPlayerScript::Tick()
 {
+	/* 테스트용 아이템 생성 (F1 ~ F5) */
+	if (KEY_TAP(KEY::F1))
+	{
+		// Ptr이 스마트 포인터라면 아래와 같이 할당하거나 
+		// 엔진의 별도 생성 함수가 있다면 그것을 사용하세요.
+		Ptr<tItemInfo> pMyItem = new tItemInfo;
+		pMyItem->strName = L"Test_Equip";
+		pMyItem->eType = ITEM_TYPE::EQUIP;
+		// 경로가 올바른지 확인 필요 (Material 폴더가 Asset 하위에 있는지)
+		pMyItem->pIcon = AssetMgr::GetInst()->Load<AMaterial>(L"Material\\Test.mtrl", L"Material\\Test.mtrl");
+		pMyItem->iCount = 1;
+
+		Vec3 vPos = GetOwner()->Transform()->GetRelativePos();
+		ItemMgr::GetInst()->CreateItemDrop(pMyItem, vPos);
+	}
+	else if (KEY_TAP(KEY::F2))
+	{
+		Ptr<tItemInfo> pMyItem = new tItemInfo;
+		pMyItem->strName = L"Test_Consum";
+		pMyItem->eType = ITEM_TYPE::CONSUME;
+		pMyItem->pIcon = AssetMgr::GetInst()->Load<AMaterial>(L"Material\\Test.mtrl", L"Material\\Test.mtrl");
+		pMyItem->iCount = 1;
+
+		Vec3 vPos = GetOwner()->Transform()->GetRelativePos();
+		ItemMgr::GetInst()->CreateItemDrop(pMyItem, vPos);
+	}
+	else if (KEY_TAP(KEY::F3))
+	{
+		Ptr<tItemInfo> pMyItem = new tItemInfo;
+		pMyItem->strName = L"Test_Etc";
+		pMyItem->eType = ITEM_TYPE::ETC;
+		pMyItem->pIcon = AssetMgr::GetInst()->Load<AMaterial>(L"Material\\Test.mtrl", L"Material\\Test.mtrl");
+		pMyItem->iCount = 1;
+
+		Vec3 vPos = GetOwner()->Transform()->GetRelativePos();
+		ItemMgr::GetInst()->CreateItemDrop(pMyItem, vPos);
+	}
+	else if (KEY_TAP(KEY::F4))
+	{
+		Ptr<tItemInfo> pMyItem = new tItemInfo;
+		pMyItem->strName = L"Intall_Etc";
+		pMyItem->eType = ITEM_TYPE::INSTALL;
+		pMyItem->pIcon = AssetMgr::GetInst()->Load<AMaterial>(L"Material\\Test.mtrl", L"Material\\Test.mtrl");
+		pMyItem->iCount = 1;
+
+		Vec3 vPos = GetOwner()->Transform()->GetRelativePos();
+		ItemMgr::GetInst()->CreateItemDrop(pMyItem, vPos);
+	}
+	else if (KEY_TAP(KEY::F5))
+	{
+		Ptr<tItemInfo> pMyItem = new tItemInfo;
+		pMyItem->strName = L"Cash_Etc";
+		pMyItem->eType = ITEM_TYPE::CASH;
+		pMyItem->pIcon = AssetMgr::GetInst()->Load<AMaterial>(L"Material\\Test.mtrl", L"Material\\Test.mtrl");
+		pMyItem->iCount = 1;
+
+		Vec3 vPos = GetOwner()->Transform()->GetRelativePos();
+		ItemMgr::GetInst()->CreateItemDrop(pMyItem, vPos);
+	}
+	/* 테스트용 아이템 생성 (F1 ~ F5) */
+
 	m_bGround = false;
-
-	Ptr<CMissileScript> pSCript = GetOwner()->GetScript<CMissileScript>();
-
 	Change_State();
-
 	Shoot();
-
-	ItemCollect(); // 아이템 수집 체크 함수
+	ItemCollect();
 }
 
 void CPlayerScript::Change_State()
@@ -217,35 +275,6 @@ void CPlayerScript::Change_State()
 	Transform()->SetRelativeScale(vScale);
 	Transform()->SetRelativeRot(vRotation);
 }
-
-void CPlayerScript::ItemCollect()
-{
-	if (KEY_TAP(KEY::Z) || KEY_PRESSED(KEY::Z))
-	{
-		// 1. 레이어 번호를 직접 숫자로 넣어서 테스트해보세요 (아이템 레이어가 3번이라고 가정)
-		// LAYER_TYPE::Layer_Item이 실제 엔진 레이어 설정과 맞는지 꼭 확인!
-		Layer* pItemLayer = LevelMgr::GetInst()->GetCurLevel()->GetLayer((int)LAYER_TYPE::Layer_Item);
-		const vector<Ptr<GameObject>>& vecItems = pItemLayer->GetParentObjects();
-
-		Vec3 vPlayerPos = Transform()->GetRelativePos();
-
-		for (size_t i = 0; i < vecItems.size(); ++i)
-		{
-			float fDist = Vec3::Distance(vPlayerPos, vecItems[i]->Transform()->GetRelativePos());
-
-			// 2. 판정 거리를 500으로 대폭 늘려서 테스트!
-			if (fDist < 500.f)
-			{
-				Ptr<CItemScript> pItemScript = vecItems[i]->GetScript<CItemScript>();
-				if (nullptr != pItemScript)
-				{
-					pItemScript->GetItem(GetOwner());
-				}
-			}
-		}
-	}
-}
-
 void CPlayerScript::Shoot()
 {
 	if (KEY_TAP(KEY::SPACE))
@@ -357,6 +386,44 @@ void CPlayerScript::OnOverlap(CCollider2D* _MyCol, CCollider2D* _OtherCol)
 	}
 	Transform()->SetRelativePos(vPos);
 	// ===== Rope 처리 =====
+}
+
+void CPlayerScript::ItemCollect()
+{
+	if (KEY_TAP(KEY::Z))
+	{
+		Layer* pItemLayer = LevelMgr::GetInst()->GetCurLevel()->GetLayer((int)LAYER_TYPE::Layer_Item);
+		const vector<Ptr<GameObject>>& vecItems = pItemLayer->GetParentObjects();
+
+		Vec3 vPlayerPos = Transform()->GetRelativePos();
+		CItemScript* pClosestScript = nullptr;
+		float fMinDist = 60.f;
+
+		for (size_t i = 0; i < vecItems.size(); ++i)
+		{
+			if (vecItems[i]->IsDead()) continue;
+
+			CItemScript* pScript = vecItems[i]->GetScript<CItemScript>().Get();
+
+			// [중요] 이미 습득 중(m_bGet == true)인 아이템은 아예 무시
+			if (nullptr == pScript || pScript->IsGetting())
+				continue;
+
+			float fDist = Vec3::Distance(vPlayerPos, vecItems[i]->Transform()->GetRelativePos());
+
+			if (fDist < fMinDist)
+			{
+				fMinDist = fDist;
+				pClosestScript = pScript;
+			}
+		}
+
+		if (nullptr != pClosestScript)
+		{
+			// 가장 가까운 '아직 안 주운' 아이템에게만 명령
+			pClosestScript->GetItem(GetOwner());
+		}
+	}
 }
 
 void CPlayerScript::OnEndOverlap(CCollider2D* _MyCol, CCollider2D* _OtherCol)

@@ -22,6 +22,7 @@ private:
     int                     m_LayerIdx; 
     bool                    m_Dead;
     bool                    m_Active;
+    bool                    m_bIsBegin;
 
 public:
     // 레벨이 처음 시작될때 호출되는 함수

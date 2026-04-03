@@ -10,12 +10,12 @@ using namespace std;
 int main()
 {
     string FilePath = "D:\\HM\\Dx\\CreateAtlas\\CreateAtlas\\x64\\Debug\\image\\";
-    string ForderName= "Tail_attack1\\";
-    string PNGName = "Tail_attack1_";
+    string ForderName= "Cursor_HoldAni\\";
+    string PNGName = "Cursor_HoldAni_";
     
-    string AtlasForderName = "HonTail_attack1\\Tail_attack1_Atlas\\";
-    string AtlasName = "Tail_attack1_Atlas";
-    int PngCount = 19;
+    string AtlasForderName = "Cursor_HoldAni_Atlas\\";
+    string AtlasName = "Cursor_HoldAni_Atlas";
+    int PngCount = 3;
 
     //// 반복재생 형식으로 제작할 때
     //vector<string> images = {

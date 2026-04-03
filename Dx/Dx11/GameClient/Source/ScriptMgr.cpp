@@ -11,6 +11,7 @@
 #include "Scripts/CGaugeBarScript.h"
 #include "Scripts/CSlotScript.h"
 #include "Scripts/CItemScript.h"
+#include "Scripts/CCursorScript.h" 
 
 void ScriptMgr::GetScriptInfo(vector<wstring>& _vec)
 {
@@ -24,6 +25,7 @@ void ScriptMgr::GetScriptInfo(vector<wstring>& _vec)
 	_vec.push_back(L"CGaugeBarScript");
 	_vec.push_back(L"CSlotScript");
 	_vec.push_back(L"CItemScript");
+	_vec.push_back(L"CCursorScript");
 }
 
 CScript * ScriptMgr::GetScript(const wstring& _strScriptName)
@@ -48,6 +50,8 @@ CScript * ScriptMgr::GetScript(const wstring& _strScriptName)
 		return new CSlotScript;
 	if (L"CItemScript" == _strScriptName)
 		return new CItemScript;
+	if (L"CCursorScript" == _strScriptName)
+		return new CCursorScript;
 	return nullptr;
 }
 
@@ -84,6 +88,9 @@ CScript * ScriptMgr::GetScript(UINT _iScriptType)
 		break;
 	case (UINT)SCRIPT_TYPE::ITEMSCRIPT:
 		return new CItemScript;
+		break;
+	case (UINT)SCRIPT_TYPE::CURSORSCRIPT:
+		return new CCursorScript;
 		break;
 	}
 	return nullptr;
@@ -132,6 +139,9 @@ const wchar_t * ScriptMgr::GetScriptName(CScript * _pScript)
 	case SCRIPT_TYPE::ITEMSCRIPT:
 		return L"CItemScript";
 		break;
+	case SCRIPT_TYPE::CURSORSCRIPT:
+		return L"CCursorScript";
+		break;
 	}
 	return nullptr;
 }
@@ -159,6 +169,8 @@ const wchar_t* ScriptMgr::GetScriptNameByType(SCRIPT_TYPE type)
 		return L"CSlotScript";
 	case SCRIPT_TYPE::ITEMSCRIPT:
 		return L"CItemScript";
+	case SCRIPT_TYPE::CURSORSCRIPT:
+		return L"CCursorScript";
 	default:
 		return nullptr;
 	}

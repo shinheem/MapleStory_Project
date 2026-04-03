@@ -341,6 +341,12 @@ void AssetMgr::CreateEngineTexture()
 	Load<ATexture>(L"Install_Btn_On", L"Texture\\MapleStory_UI\\InventoryUI\\Bt_Inven3_1_On.png");
 
 	Load<ATexture>(L"Cash_Btn_On", L"Texture\\MapleStory_UI\\InventoryUI\\Bt_Inven4_1_On.png");
+
+	Load<ATexture>(L"Cursor_Default", L"Texture\\Maple_MouseUI\\Cursor_Default.png");
+
+	Load<ATexture>(L"Cursor_HoldAni_Atlas", L"Texture\\Maple_MouseUI\\Cursor_Hold\\Cursor_HoldAni_Atlas.png");
+
+	Load<ATexture>(L"Cursor_MouseOver", L"Texture\\Maple_MouseUI\\Cursor_MouseOver\\Cursor_MouseOver_Atlas.png");
 }
 
 void AssetMgr::CreateEngineMaterial()

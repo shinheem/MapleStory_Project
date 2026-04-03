@@ -25,6 +25,8 @@ private:
     float                   m_AccTime;
 
 public:
+    int GetCurFlipbookIdx() { return m_CurFlipbook; }
+
     FlipbookRenderData* GetRenderData(int _Idx)
     {
         if (_Idx < 0 || _Idx >= (int)m_vecRenderData.size())

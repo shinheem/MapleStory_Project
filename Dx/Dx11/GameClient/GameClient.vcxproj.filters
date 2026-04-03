@@ -313,6 +313,9 @@
     <ClInclude Include="ItemMgr.h">
       <Filter>GameEngine\03. Manager\10. ItemMgr</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Scripts\CCursorScript.h">
+      <Filter>Source\Scripts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="GameClient.ico">
@@ -855,6 +858,9 @@
     </ClCompile>
     <ClCompile Include="ItemMgr.cpp">
       <Filter>GameEngine\03. Manager\10. ItemMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scripts\CCursorScript.cpp">
+      <Filter>Source\Scripts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

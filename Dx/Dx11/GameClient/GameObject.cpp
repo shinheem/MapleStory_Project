@@ -12,6 +12,7 @@ GameObject::GameObject()
 	, m_LayerIdx(-1)
 	, m_Dead(false)	
 	, m_Active(true)
+	, m_bIsBegin(false)
 {
 }
 
@@ -47,10 +48,23 @@ GameObject::GameObject(const GameObject& _Origin)
 
 GameObject::~GameObject()
 {
+	// 자식들에 대한 Ptr 참조를 모두 끊음
+	for (size_t i = 0; i < m_vecChild.size(); ++i)
+	{
+		m_vecChild[i] = nullptr;
+	}
+	m_vecChild.clear();
+
+	// 컴포넌트와 스크립트도 마찬가지
+	for (int i = 0; i < (int)COMPONENT_TYPE::END; ++i)
+		m_Com[i] = nullptr;
 }
 
 void GameObject::Begin()
 {
+	if (m_bIsBegin) return;
+	m_bIsBegin = true;
+
 	for (size_t i = 0; i < m_vecScripts.size(); ++i)
 	{
 		m_vecScripts[i]->Begin();

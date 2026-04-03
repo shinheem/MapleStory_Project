@@ -55,8 +55,7 @@ void RenderMgr::Progress()
 		activeCam->Render();
 	}
 
-	if (m_bDebugRender)
-		Render_Debug();
+	Render_Debug();
 
 	Render_End();
 }
@@ -110,54 +109,57 @@ void RenderMgr::Render_End()
 void RenderMgr::Render_Debug()
 {
 	list<DbgInfo>::iterator iter = m_DbgInfoList.begin();
-	for (; iter != m_DbgInfoList.end();)
+	for (; iter != m_DbgInfoList.end(); )
 	{
-		// Mesh 설정
-		switch ((*iter).Shape)
+		// 1. 디버그 렌더링 옵션이 켜져 있을 때만 실제 그리기 작업을 수행합니다.
+		if (m_bDebugRender)
 		{
-		case DBG_SHAPE::RECT:
-			m_DbgObj->MeshRender()->SetMesh(FIND(AMesh, L"RectMesh_LineStrip"));
-			break;
-		case DBG_SHAPE::CIRCLE:
-			m_DbgObj->MeshRender()->SetMesh(FIND(AMesh, L"CircleMesh_LineStrip"));
-			break;
-		case DBG_SHAPE::CUBE:
-			m_DbgObj->MeshRender()->SetMesh(FIND(AMesh, L"CubeMesh"));
-			break;
-		case DBG_SHAPE::SPHERE:
-			m_DbgObj->MeshRender()->SetMesh(FIND(AMesh, L"SphereMesh"));
-			break;
+			// Mesh 설정
+			switch ((*iter).Shape)
+			{
+			case DBG_SHAPE::RECT:
+				m_DbgObj->MeshRender()->SetMesh(FIND(AMesh, L"RectMesh_LineStrip"));
+				break;
+			case DBG_SHAPE::CIRCLE:
+				m_DbgObj->MeshRender()->SetMesh(FIND(AMesh, L"CircleMesh_LineStrip"));
+				break;
+			case DBG_SHAPE::CUBE:
+				m_DbgObj->MeshRender()->SetMesh(FIND(AMesh, L"CubeMesh"));
+				break;
+			case DBG_SHAPE::SPHERE:
+				m_DbgObj->MeshRender()->SetMesh(FIND(AMesh, L"SphereMesh"));
+				break;
+			}
+
+			// Transform 설정
+			if ((*iter).matWorld == XMMatrixIdentity())
+			{
+				m_DbgObj->Transform()->SetRelativePos((*iter).Pos);
+				m_DbgObj->Transform()->SetRelativeScale((*iter).Scale);
+				m_DbgObj->Transform()->SetRelativeRot((*iter).Rotation);
+				m_DbgObj->Transform()->FinalTick();
+			}
+			else
+			{
+				m_DbgObj->Transform()->SetWorldMat((*iter).matWorld);
+			}
+
+			// Material 설정
+			m_DbgObj->MeshRender()->GetMaterial()->SetScalar(VEC4_0, (*iter).Color);
+
+			if ((*iter).DepthTest)
+				m_DbgObj->MeshRender()->GetMaterial()->GetShader()->SetDSType(DS_TYPE::LESS);
+			else
+				m_DbgObj->MeshRender()->GetMaterial()->GetShader()->SetDSType(DS_TYPE::NO_TEST_NO_WRITE);
+
+			// 실제 Render 요청
+			m_DbgObj->Render();
 		}
 
-		// Transform 설정
-
-		if ((*iter).matWorld == XMMatrixIdentity())
-		{
-			m_DbgObj->Transform()->SetRelativePos((*iter).Pos);
-			m_DbgObj->Transform()->SetRelativeScale((*iter).Scale);
-			m_DbgObj->Transform()->SetRelativeRot((*iter).Rotation);
-			m_DbgObj->Transform()->FinalTick();
-		}
-		else
-		{
-			m_DbgObj->Transform()->SetWorldMat((*iter).matWorld);
-		}		
-		
-		// Material 설정
-		m_DbgObj->MeshRender()->GetMaterial()->SetScalar(VEC4_0, (*iter).Color);
-
-		if ((*iter).DepthTest)
-			m_DbgObj->MeshRender()->GetMaterial()->GetShader()->SetDSType(DS_TYPE::LESS);
-		else
-			m_DbgObj->MeshRender()->GetMaterial()->GetShader()->SetDSType(DS_TYPE::NO_TEST_NO_WRITE);
-
-		// Render 요청
-		m_DbgObj->Render();
-
-		// 렌더링 시간 누적
+		// 2. ★ 핵심: 수명 관리는 렌더링 여부와 상관없이 항상 진행합니다. ★
+		// 그래야 m_bDebugRender가 false일 때 데이터가 무한히 쌓이지(Leak) 않습니다.
 		(*iter).Age += E_DT;
 
-		// 최대 수명에 도달하면 정보 삭제
 		if ((*iter).Life < (*iter).Age)
 			iter = m_DbgInfoList.erase(iter);
 		else

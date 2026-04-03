@@ -1,4 +1,7 @@
 #pragma once
+
+#include "Source\Scripts\CInventoryScript.h"
+
 class ItemMgr
 	: public singleton<ItemMgr>
 {
@@ -6,6 +9,6 @@ class ItemMgr
 private:
 	
 public:
-	void CreateItemDrop(ITEM_TYPE _eType, const wstring& _strName, Vec3 _vSpawnPos);
+	void CreateItemDrop(Ptr<tItemInfo> _pInfo, Vec3 _vPos);
 };
 

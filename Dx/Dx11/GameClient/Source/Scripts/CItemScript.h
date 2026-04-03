@@ -36,6 +36,8 @@ public:
     void SetItemInfo(Ptr<tItemInfo> _pInfo) { m_ItemInfo = _pInfo; }
     Ptr<tItemInfo> GetItemInfo() { return m_ItemInfo; }
 
+    bool IsGetting() { return m_bGet; }
+
 private:
     void OnBeginOverlap(CCollider2D* _MyCol, CCollider2D* _OtherCol);
     void OnOverlap(CCollider2D* _MyCol, CCollider2D* _OtherCol);

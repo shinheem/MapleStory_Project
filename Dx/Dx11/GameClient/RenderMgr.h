@@ -7,7 +7,7 @@
 class RenderMgr
 	: public singleton<RenderMgr>
 {
-	SINGLE(RenderMgr);
+	SINGLE(RenderMgr)
 private:
 	Ptr<CCamera>			m_MainCam;
 	Ptr<CCamera>			m_EditorCam;

@@ -198,6 +198,7 @@ enum class ITEM_TYPE
 	CONSUME,    // 1: 소비
 	ETC,        // 2: 기타
 	INSTALL,    // 3: 설치
+	CASH,		// 4: 캐시
 
 	END,
 };
@@ -210,4 +211,11 @@ enum class INVEN_TYPE
 	INSTALL,    // 설치
 	CASH,       // 캐시
 	END,
+};
+
+enum class MOUSE_STATE 
+{ 
+	NONE,
+	HOVER, 
+	CLICK 
 };

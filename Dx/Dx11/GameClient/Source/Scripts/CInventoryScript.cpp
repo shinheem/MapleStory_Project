@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CInventoryScript.h"
+#include "CCursorScript.h"
 
 #include "../../LevelMgr.h"
 #include "../../KeyMgr.h"
@@ -13,28 +14,29 @@ CInventoryScript::CInventoryScript()
     , m_vecInventory{}
     , m_vecTabContents{}
     , m_iCurrentTab(0)
+    , m_iDragFromIdx()
+    , m_bIsDragging()
 
 {
 }
 
 void CInventoryScript::Begin()
 {
-    // 인벤토리 탭, 슬롯 생성
-    /*if (GetOwner()->GetChilds().size() <= 1)
+    // 1. 중복 실행 방지 (자식 객체이거나 이미 데이터가 있다면 리턴)
+    if (GetOwner()->GetParent() != nullptr) return;
+    if (!m_vecTabContents.empty()) return;
+
+    // 2. 인벤토리 데이터 배열 초기화 (24칸씩)
+    for (int i = 0; i < (int)INVEN_TYPE::END; ++i)
     {
-        CreateInventorySlots();
-    }*/
-    if (GetOwner()->GetParent() != nullptr)
-        return;
+        m_vecInventory[i].clear();
+        m_vecInventory[i].resize(INVEN_SLOT_COUNT, nullptr);
+    }
 
-    // 1. 기존에 담긴 내용이 있다면 비워줍니다.
     m_vecTabContents.clear();
-
-    // 2. 현재 내 자식 오브젝트들을 순회하며 컨텐츠 패널을 찾습니다.
     const vector<Ptr<GameObject>>& vecChildren = GetOwner()->GetChild();
 
-    // 탭 이름 정의 (헤더에 선언된 m_tabNames 활용)
-    // L"Equip", L"Consume", L"Etc", L"Install", L"Cash" 순서대로 찾아서 넣어야 합니다.
+    // 3. 각 탭의 부모 오브젝트(Content) 찾기 및 슬롯 인덱스 설정
     for (int i = 0; i < (int)INVEN_TYPE::END; ++i)
     {
         wstring strTargetName = m_tabNames[i] + L"_Content";
@@ -44,43 +46,75 @@ void CInventoryScript::Begin()
         {
             if (vecChildren[j]->GetName() == strTargetName)
             {
-                m_vecTabContents.push_back(vecChildren[j]);
+                // 컨텐츠 패널 저장
+                m_vecTabContents.push_back(vecChildren[j].Get());
 
-                // 처음 시작할 때 0번(Equip)만 켜고 나머지는 끕니다.
+                // 현재 선택된 탭만 활성화, 나머지는 비활성화
                 if (i == m_iCurrentTab) vecChildren[j]->SetActive(true);
                 else vecChildren[j]->SetActive(false);
+
+                // ★ 핵심: 해당 패널 자식(슬롯)들에게 번호 부여 ★
+                const vector<Ptr<GameObject>>& vecSlots = vecChildren[j]->GetChild();
+                for (size_t k = 0; k < vecSlots.size(); ++k)
+                {
+                    CSlotScript* pSlot = vecSlots[k]->GetScript<CSlotScript>().Get();
+                    if (pSlot)
+                    {
+                        // k가 0~23번까지의 고유 번호가 됩니다.
+                        // i는 EQUIP, CONSUME 등의 탭 타입입니다.
+                        pSlot->SetSlotInfo((INVEN_TYPE)i, (int)k);
+                    }
+                }
 
                 bFound = true;
                 break;
             }
         }
-
-        // 만약 레벨에서 이름을 잘못 지어서 못 찾았다면 경고를 띄웁니다.
-        assert(bFound && "레벨에서 인벤토리 컨텐츠 오브젝트를 찾을 수 없습니다!");
+        assert(bFound && "탭 컨텐츠 오브젝트(L'Equip_Content' 등)를 찾을 수 없습니다!");
     }
 
-    GetOwner()->SetActive(false);
-    m_iCurrentTab = 0;
+    // 4. 탭 버튼 애니메이션/상태 초기화
+    int iTabCount = 0;
+    for (size_t i = 0; i < vecChildren.size(); ++i)
+    {
+        if (vecChildren[i]->GetName().find(L"_Button") != wstring::npos)
+        {
+            if (vecChildren[i]->FlipbookRender() != nullptr)
+            {
+                // 현재 선택된 탭 버튼은 '눌림' 상태(1번 프레임)
+                if (iTabCount == m_iCurrentTab)
+                    vecChildren[i]->FlipbookRender()->Play(1, 1.f, -1);
+                else
+                    vecChildren[i]->FlipbookRender()->Play(0, 1.f, -1);
+            }
+            iTabCount++;
+        }
+    }
 
-    // 3. 이제 벡터가 채워졌으므로 안전하게 호출 가능합니다.
+    // 5. 초기 UI 데이터 반영
     UpdateTabUI(m_iCurrentTab);
+
+    // 6. 시작 시 인벤토리는 닫혀 있도록 설정 (필요 시)
+    GetOwner()->SetActive(false);
 }
 
 CInventoryScript::~CInventoryScript()
 {
+    m_vecTabContents.clear();
+    for (int i = 0; i < (int)INVEN_TYPE::END; ++i)
+    {
+        m_vecInventory[i].clear();
+    }
 }
 
 void CInventoryScript::Tick()
 {
     if (GetOwner()->GetParent() != nullptr) return;
 
-    // 1. 인벤토리 열기/닫기
     if (KEY_TAP(KEY::I))
     {
         bool bActive = !GetOwner()->IsActive();
         GetOwner()->SetActive(bActive);
-
-        // 열 때 현재 탭의 슬롯 상태를 최신화
         if (bActive) UpdateTabUI(m_iCurrentTab);
     }
     else if (KEY_TAP(KEY::ESC))
@@ -90,26 +124,19 @@ void CInventoryScript::Tick()
 
     if (!GetOwner()->IsActive()) return;
 
-    // 2. 탭 클릭 체크
     if (KEY_TAP(KEY::LBTN))
     {
         Vec2 vMousePos = KeyMgr::GetInst()->GetMousePos();
-
-        // 해상도 값은 엔진 환경에 맞게 넣어주세요 (예: 1600, 900)
         float fHWidth = 1600.f / 2.f;
         float fHHeight = 900.f / 2.f;
-
-        // 좌표계 일치 작업 (중앙 0,0 기준)
         Vec2 vCenteredMouse = Vec2(vMousePos.x - fHWidth, fHHeight - vMousePos.y);
-
         Vec3 vInvPos = Transform()->GetWorldPos();
         Vec2 vLocalMouse = Vec2(vCenteredMouse.x - vInvPos.x, vCenteredMouse.y - vInvPos.y);
 
-        // 이제 이 vLocalMouse를 가지고 버튼의 Rect 판정을 수행합니다.
         const vector<Ptr<GameObject>>& vecChildren = GetOwner()->GetChild();
         int iTabIdx = 0;
 
-        for (size_t i = 1; i < vecChildren.size(); ++i) // 0번 X버튼 스킵
+        for (size_t i = 0; i < vecChildren.size(); ++i)
         {
             if (vecChildren[i]->GetName().find(L"_Button") != wstring::npos)
             {
@@ -128,40 +155,50 @@ void CInventoryScript::Tick()
     }
 }
 
-void CInventoryScript::AddItem(Ptr<tItemInfo> _pItem)
+bool CInventoryScript::AddItem(Ptr<tItemInfo> _pInfo)
 {
-    if (nullptr == _pItem) return;
+    if (nullptr == _pInfo) return false;
 
-    // 전달받은 아이템 정보를 그대로 탭에 맞게 분류
-    UINT iTargetTab = (UINT)_pItem->eType;
+    UINT iType = (UINT)_pInfo->eType;
+    auto& vecTargetTab = m_vecInventory[iType];
 
-    if (m_vecInventory[iTargetTab].size() < 24)
+    for (size_t i = 0; i < vecTargetTab.size(); ++i)
     {
-        // 핵심: 새로 New 하지 않고 받은 포인터를 그대로 보관
-        m_vecInventory[iTargetTab].push_back(_pItem);
+        if (vecTargetTab[i] == nullptr)
+        {
+            vecTargetTab[i] = _pInfo;
+
+            // 현재 보고 있는 탭과 추가된 아이템 탭이 같다면 화면 즉시 갱신
+            if (m_iCurrentTab == (int)iType)
+            {
+                UpdateTabUI(m_iCurrentTab);
+            }
+
+            return true;
+        }
     }
 
-    // UI 갱신 (슬롯에 아이콘 그려주기)
-    UpdateTabUI(m_iCurrentTab);
+    return false;
 }
 
 void CInventoryScript::UpdateTabUI(int _iTabIdx)
 {
-    // 1. 현재 선택된 탭 컨테이너(부모)가 가진 슬롯 자식들을 가져옴
+    if (_iTabIdx >= (int)m_vecTabContents.size()) return;
+
+    // 1. 해당 탭의 슬롯 오브젝트들 가져오기
     const vector<Ptr<GameObject>>& vecSlots = m_vecTabContents[_iTabIdx]->GetChild();
 
-    // 2. 현재 데이터 상의 아이템 목록 가져옴
+    // 2. 해당 탭의 데이터 가져오기
     const vector<Ptr<tItemInfo>>& vecItems = m_vecInventory[_iTabIdx];
 
     for (size_t i = 0; i < vecSlots.size(); ++i)
     {
-        // 각 슬롯 오브젝트에 붙어있는 CSlotScript를 찾음
-        Ptr<CSlotScript> pSlotScript = vecSlots[i]->GetScript<CSlotScript>();
+        CSlotScript* pSlotScript = vecSlots[i]->GetScript<CSlotScript>().Get();
         if (nullptr == pSlotScript) continue;
 
-        // 슬롯 인덱스에 맞는 데이터가 있으면 전달, 없으면 nullptr 전달
         if (i < vecItems.size())
         {
+            // 데이터 전달 (SetItem 내부에서 이제 재질을 바꿉니다)
             pSlotScript->SetItem(vecItems[i]);
         }
         else
@@ -176,12 +213,9 @@ void CInventoryScript::ChangeTab(int _iNextTab)
     if (_iNextTab < 0 || _iNextTab >= (int)INVEN_TYPE::END) return;
     if (m_iCurrentTab == _iNextTab) return;
 
-    // 1. 기존 탭 처리
-    // 컨텐츠 숨기기
     if (m_vecTabContents[m_iCurrentTab])
         m_vecTabContents[m_iCurrentTab]->SetActive(false);
 
-    // 버튼 애니메이션 0번(비활성)으로 변경
     const vector<Ptr<GameObject>>& vecChildren = GetOwner()->GetChild();
     int iTabCount = 0;
     for (auto& child : vecChildren)
@@ -190,39 +224,143 @@ void CInventoryScript::ChangeTab(int _iNextTab)
         {
             if (iTabCount == m_iCurrentTab)
             {
-                child->FlipbookRender()->Play(0, 1.f, -1);
-                break;
+                if (child->FlipbookRender()) child->FlipbookRender()->Play(0, 1.f, -1);
+            }
+            if (iTabCount == _iNextTab)
+            {
+                if (child->FlipbookRender()) child->FlipbookRender()->Play(1, 1.f, -1);
             }
             iTabCount++;
         }
     }
 
-    // 2. 현재 탭 인덱스 갱신
     m_iCurrentTab = _iNextTab;
 
-    // 3. 새로운 탭 처리
-    // 컨텐츠 보이기
     if (m_vecTabContents[m_iCurrentTab])
     {
         m_vecTabContents[m_iCurrentTab]->SetActive(true);
         UpdateTabUI(m_iCurrentTab);
     }
+}
 
-    // 버튼 애니메이션 1번(활성)으로 변경
-    iTabCount = 0;
-    for (auto& child : vecChildren)
+// CInventoryScript.cpp
+void CInventoryScript::SwapSlot(int _iType, int _iFromIdx, int _iToIdx)
+{
+    // 1. 같은 위치면 무시
+    if (_iFromIdx == _iToIdx) return;
+
+    // 2. 실제 데이터 교체
+    Ptr<tItemInfo> pTemp = m_vecInventory[_iType][_iFromIdx];
+    m_vecInventory[_iType][_iFromIdx] = m_vecInventory[_iType][_iToIdx];
+    m_vecInventory[_iType][_iToIdx] = pTemp;
+
+    // 3. UI 갱신 (이미 만들어두신 함수 호출)
+    UpdateTabUI(_iType);
+}
+
+void CInventoryScript::HandleSlotClick(CSlotScript* _pSlot)
+{
+    if (nullptr == _pSlot) return;
+
+    // 1. 커서 객체와 스크립트 가져오기
+    GameObject* pMouse = LevelMgr::GetInst()->GetCurLevel()->FindObjectByName(L"Mouse_Cursor").Get();
+    if (nullptr == pMouse) return;
+
+    CCursorScript* pCursor = pMouse->GetScript<CCursorScript>().Get();
+    if (nullptr == pCursor) return;
+
+    // 2. 커서의 비주얼 아이콘 오브젝트 찾기 (자식 객체)
+    GameObject* pCursorIconObj = nullptr;
+    const vector<Ptr<GameObject>>& vecCursorChildren = pMouse->GetChild();
+    for (size_t i = 0; i < vecCursorChildren.size(); ++i)
     {
-        if (child->GetName().find(L"_Button") != wstring::npos)
+        if (vecCursorChildren[i]->GetName() == L"Cursor_Icon")
         {
-            if (iTabCount == m_iCurrentTab)
-            {
-                child->FlipbookRender()->Play(1, 1.f, -1);
-                break;
-            }
-            iTabCount++;
+            pCursorIconObj = vecCursorChildren[i].Get();
+            break;
         }
     }
+
+    // 3. 클릭된 슬롯의 정보 추출
+    int iTargetIdx = _pSlot->GetSlotIdx();   // 슬롯 번호 (0~23)
+    int iTabType = (int)_pSlot->GetTabType(); // 탭 종류 (EQUIP, CONSUME 등)
+
+    // 안전 장치: 인덱스 범위 확인
+    if (iTargetIdx < 0 || iTargetIdx >= INVEN_SLOT_COUNT) return;
+
+    // [상황 A] 커서가 비어 있음 -> 아이템 집기 (Pick Up)
+    if (pCursor->GetPickedItem() == nullptr)
+    {
+        Ptr<tItemInfo> pItem = m_vecInventory[iTabType][iTargetIdx];
+
+        // 슬롯에 아이템이 있을 때만 집음
+        if (pItem != nullptr)
+        {
+            // 커서 데이터 설정
+            pCursor->SetPickedItem(pItem);
+
+            // 인벤토리 데이터 비우기
+            m_vecInventory[iTabType][iTargetIdx] = nullptr;
+
+            // 드래그 상태값 설정
+            m_iDragFromIdx = iTargetIdx;
+            m_bIsDragging = true;
+
+            // 커서 아이콘 활성화 및 재질 적용
+            if (pCursorIconObj)
+            {
+                pCursorIconObj->SetActive(true);
+                if (pCursorIconObj->MeshRender())
+                    pCursorIconObj->MeshRender()->SetMaterial(pItem->pIcon);
+
+                // 커서보다 살짝 앞에 위치 (Z값 조정)
+                pCursorIconObj->Transform()->SetRelativePos(Vec3(0.f, 0.f, -1.f));
+            }
+
+            // 슬롯 UI 갱신 (아이템이 사라진 모습으로)
+            UpdateTabUI(iTabType);
+        }
+    }
+    // [상황 B] 커서가 아이템을 들고 있음 -> 내려놓기 또는 교체 (Drop / Swap)
+    else
+    {
+        Ptr<tItemInfo> pPickedItem = pCursor->GetPickedItem(); // 손에 든 아이템
+        Ptr<tItemInfo> pExistItem = m_vecInventory[iTabType][iTargetIdx]; // 슬롯에 원래 있던 아이템(없으면 nullptr)
+
+        // 중요: 아이템 타입과 현재 탭이 일치하는지 확인 (예: 장비는 장비탭에만)
+        if (pPickedItem->eType != (ITEM_TYPE)iTabType)
+        {
+            // 타입이 안 맞으면 그냥 무시하거나 안내 메시지
+            return;
+        }
+
+        // 데이터 교체 로직 (핵심)
+        m_vecInventory[iTabType][iTargetIdx] = pPickedItem; // 슬롯에 손에 든 아이템 배치
+        pCursor->SetPickedItem(pExistItem);              // 슬롯에 있던 아이템을 손으로 (없었다면 nullptr이 됨)
+
+        // 커서 비주얼 업데이트
+        if (pCursorIconObj)
+        {
+            if (pExistItem != nullptr)
+            {
+                // 교체(Swap)된 경우: 새로운 아이템 아이콘 표시
+                pCursorIconObj->SetActive(true);
+                if (pCursorIconObj->MeshRender())
+                    pCursorIconObj->MeshRender()->SetMaterial(pExistItem->pIcon);
+            }
+            else
+            {
+                // 빈 슬롯에 놓은 경우: 커서 아이콘 비활성화 및 드래그 종료
+                pCursorIconObj->SetActive(false);
+                m_bIsDragging = false;
+            }
+        }
+
+        // 전체 UI 갱신
+        UpdateTabUI(iTabType);
+    }
 }
+
 // 인벤토리 탭, 슬롯 생성 함수
 //void CInventoryScript::CreateInventorySlots()
 //{
