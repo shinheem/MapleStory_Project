@@ -111,6 +111,7 @@ void CInventoryScript::Tick()
 {
     if (GetOwner()->GetParent() != nullptr) return;
 
+    // --- 1. 키보드 입력 처리 ---
     if (KEY_TAP(KEY::I))
     {
         bool bActive = !GetOwner()->IsActive();
@@ -124,20 +125,69 @@ void CInventoryScript::Tick()
 
     if (!GetOwner()->IsActive()) return;
 
+    // 공통 좌표 계산 (클릭과 호버 모두 사용)
+    Vec2 vMousePos = KeyMgr::GetInst()->GetMousePos();
+    float fHWidth = 1600.f / 2.f;
+    float fHHeight = 900.f / 2.f;
+    Vec2 vCenteredMouse = Vec2(vMousePos.x - fHWidth, fHHeight - vMousePos.y);
+    Vec3 vInvPos = Transform()->GetWorldPos();
+    Vec2 vLocalMouse = Vec2(vCenteredMouse.x - vInvPos.x, vCenteredMouse.y - vInvPos.y);
+
+    const vector<Ptr<GameObject>>& vecChildren = GetOwner()->GetChild();
+
+    // --- [추가] Inventory_XBtn 호버 애니메이션 처리 ---
+    for (size_t i = 0; i < vecChildren.size(); ++i)
+    {
+        if (vecChildren[i]->GetName() == L"Incentory_XBtn")
+        {
+            if (vecChildren[i]->FlipbookRender())
+            {
+                Vec3 vPos = vecChildren[i]->Transform()->GetRelativePos();
+                Vec3 vScale = vecChildren[i]->Transform()->GetRelativeScale();
+
+                // 마우스가 X버튼 영역 안에 있는지 체크
+                if (vLocalMouse.x >= vPos.x - vScale.x * 0.5f && vLocalMouse.x <= vPos.x + vScale.x * 0.5f &&
+                    vLocalMouse.y >= vPos.y - vScale.y * 0.5f && vLocalMouse.y <= vPos.y + vScale.y * 0.5f)
+                {
+                    // 마우스 올라감 -> 1번 애니메이션
+                    if (vecChildren[i]->FlipbookRender()->GetCurFlipbookIdx() != 1)
+                        vecChildren[i]->FlipbookRender()->Play(1, 1.f, -1);
+                }
+                else
+                {
+                    // 마우스 나감 -> 0번 애니메이션
+                    if (vecChildren[i]->FlipbookRender()->GetCurFlipbookIdx() != 0)
+                        vecChildren[i]->FlipbookRender()->Play(0, 1.f, -1);
+                }
+            }
+            break; // X버튼을 찾았으므로 루프 종료
+        }
+    }
+
+
+    // --- 2. 마우스 클릭 처리 ---
     if (KEY_TAP(KEY::LBTN))
     {
-        Vec2 vMousePos = KeyMgr::GetInst()->GetMousePos();
-        float fHWidth = 1600.f / 2.f;
-        float fHHeight = 900.f / 2.f;
-        Vec2 vCenteredMouse = Vec2(vMousePos.x - fHWidth, fHHeight - vMousePos.y);
-        Vec3 vInvPos = Transform()->GetWorldPos();
-        Vec2 vLocalMouse = Vec2(vCenteredMouse.x - vInvPos.x, vCenteredMouse.y - vInvPos.y);
-
-        const vector<Ptr<GameObject>>& vecChildren = GetOwner()->GetChild();
         int iTabIdx = 0;
 
         for (size_t i = 0; i < vecChildren.size(); ++i)
         {
+            // [수정] Inventory_XBtn 클릭 판정
+            if (vecChildren[i]->GetName() == L"Incentory_XBtn")
+            {
+                Vec3 vPos = vecChildren[i]->Transform()->GetRelativePos();
+                Vec3 vScale = vecChildren[i]->Transform()->GetRelativeScale();
+
+                if (vLocalMouse.x >= vPos.x - vScale.x * 0.5f && vLocalMouse.x <= vPos.x + vScale.x * 0.5f &&
+                    vLocalMouse.y >= vPos.y - vScale.y * 0.5f && vLocalMouse.y <= vPos.y + vScale.y * 0.5f)
+                {
+                    GetOwner()->SetActive(false); // 인벤토리 닫기
+                    return;
+                }
+                continue;
+            }
+
+            // [기존] 탭 버튼 클릭 판정
             if (vecChildren[i]->GetName().find(L"_Button") != wstring::npos)
             {
                 Vec3 vPos = vecChildren[i]->Transform()->GetRelativePos();

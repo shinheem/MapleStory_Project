@@ -160,6 +160,78 @@ void CCursorScript::Tick()
             }
         }
     }
+    // --- 4. 상태 결정 ---
+    MOUSE_STATE eCurState = MOUSE_STATE::NONE;
+
+    if (m_pPickedItem != nullptr)
+    {
+        eCurState = MOUSE_STATE::HOLD; // 3번: 아이템 들고 있을 때
+    }
+    else
+    {
+        CSlotScript* pHoveredSlot = GetHoveredSlot();
+        bool bHoverTabButton = false;
+
+        GameObject* pInvObj = LevelMgr::GetInst()->GetCurLevel()->FindObjectByName(L"Charactor_Inventory").Get();
+        if (pInvObj && pInvObj->IsActive())
+        {
+            const vector<Ptr<GameObject>>& vecChildren = pInvObj->GetChild();
+            Vec3 vInvPos = pInvObj->Transform()->GetWorldPos();
+            Vec2 vLocalMouse = Vec2(m_vMousePos.x - vInvPos.x, m_vMousePos.y - vInvPos.y);
+
+            for (size_t i = 0; i < vecChildren.size(); ++i)
+            {
+                if (vecChildren[i]->GetName().find(L"_Button") != wstring::npos)
+                {
+                    Vec3 vPos = vecChildren[i]->Transform()->GetRelativePos();
+                    Vec3 vScale = vecChildren[i]->Transform()->GetRelativeScale();
+
+                    if (vLocalMouse.x >= vPos.x - vScale.x * 0.5f && vLocalMouse.x <= vPos.x + vScale.x * 0.5f &&
+                        vLocalMouse.y >= vPos.y - vScale.y * 0.5f && vLocalMouse.y <= vPos.y + vScale.y * 0.5f)
+                    {
+                        bHoverTabButton = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // --- 상태 세부 결정 ---
+        if (bHoverTabButton)
+        {
+            eCurState = MOUSE_STATE::TAB_HOVER;
+        }
+        else if (pHoveredSlot != nullptr)
+        {
+            // 슬롯 위에 있을 때는 클릭 여부와 상관없이 무조건 SLOT_HOVER(2번) 유지
+            // 만약 클릭 시 특별한 연출이 필요 없다면 아래처럼 한 줄로 처리하면 됩니다.
+            eCurState = MOUSE_STATE::SLOT_HOVER;
+        }
+    }
+
+    // --- 5. 애니메이션 재생 (번호 매핑은 동일) ---
+    if (m_ePrevState != eCurState)
+    {
+        if (FlipbookRender())
+        {
+            switch (eCurState)
+            {
+            case MOUSE_STATE::NONE:
+                FlipbookRender()->Play(0, 6.f, -1);
+                break;
+            case MOUSE_STATE::TAB_HOVER:
+                FlipbookRender()->Play(1, 6.f, -1); // 탭 호버 (1번)
+                break;
+            case MOUSE_STATE::SLOT_HOVER:
+                FlipbookRender()->Play(2, 6.f, -1); // 슬롯 호버/클릭 (2번) ★
+                break;
+            case MOUSE_STATE::HOLD:
+                FlipbookRender()->Play(3, 6.f, -1); // 아이템 잡기 (3번)
+                break;
+            }
+        }
+        m_ePrevState = eCurState;
+    }
 }
 
 CSlotScript* CCursorScript::GetHoveredSlot()

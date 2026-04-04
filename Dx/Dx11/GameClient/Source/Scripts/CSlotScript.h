@@ -9,7 +9,6 @@ class CSlotScript :
 private:
     Ptr<tItemInfo>      m_pTargetItem;
 
-    MOUSE_STATE         m_ePrevState; // 이전 프레임의 마우스 상태 저장
     INVEN_TYPE          m_iTabType;   // 어떤 탭에 속해 있는가 (0:장비, 1:소비...)
     int                 m_iSlotIdx;   // 해당 탭에서 몇 번째 칸인가 (0~23)
 

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CSlotScript.h"
 #include "CInventoryScript.h"
+#include "CCursorScript.h"
 
 #include "../../LevelMgr.h"
 #include "../../KeyMgr.h"
@@ -23,48 +24,6 @@ CSlotScript::~CSlotScript()
 
 void CSlotScript::Tick()
 {
-    // 1 & 2. 좌표 계산 로직 (기존과 동일)
-    Vec2 vMousePos = KeyMgr::GetInst()->GetMousePos();
-    float fHWidth = 1600.f / 2.f;
-    float fHHeight = 900.f / 2.f;
-    Vec2 vMousePoint = Vec2(vMousePos.x - fHWidth, fHHeight - vMousePos.y);
-
-    Vec3 vWorldPos = Transform()->GetWorldPos();
-    Vec3 vScale = Transform()->GetRelativeScale();
-
-    // 3. 충돌 판정
-    bool bHover = (vMousePoint.x >= vWorldPos.x - vScale.x * 0.5f && vMousePoint.x <= vWorldPos.x + vScale.x * 0.5f &&
-        vMousePoint.y >= vWorldPos.y - vScale.y * 0.5f && vMousePoint.y <= vWorldPos.y + vScale.y * 0.5f);
-
-    // 4. 상태 결정
-    MOUSE_STATE eCurState = MOUSE_STATE::NONE;
-    if (bHover)
-    {
-        if (KEY_PRESSED(KEY::LBTN)) eCurState = MOUSE_STATE::CLICK;
-        else eCurState = MOUSE_STATE::HOVER;
-    }
-
-    // 5. 상태가 변경되었을 때만 애니메이션 재생
-    if (m_ePrevState != eCurState)
-    {
-        GameObject* pMouse = LevelMgr::GetInst()->GetCurLevel()->FindObjectByName(L"Mouse_Cursor").Get();
-        if (pMouse && pMouse->FlipbookRender())
-        {
-            switch (eCurState)
-            {
-            case MOUSE_STATE::NONE:
-                pMouse->FlipbookRender()->Play(0, 6.f, -1); // 기본 커서
-                break;
-            case MOUSE_STATE::HOVER:
-                pMouse->FlipbookRender()->Play(2, 6.f, -1); // 호버 애니메이션
-                break;
-            case MOUSE_STATE::CLICK:
-                pMouse->FlipbookRender()->Play(1, 6.f, -1); // 클릭 애니메이션
-                break;
-            }
-        }
-        m_ePrevState = eCurState; // 현재 상태 저장
-    }
 }
 
 void CSlotScript::SetSlotInfo(Ptr<tItemInfo> _pInfo)

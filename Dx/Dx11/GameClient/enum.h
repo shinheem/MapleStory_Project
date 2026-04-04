@@ -216,6 +216,7 @@ enum class INVEN_TYPE
 enum class MOUSE_STATE 
 { 
 	NONE,
-	HOVER, 
-	CLICK 
+	TAB_HOVER,
+	SLOT_HOVER,
+	HOLD
 };

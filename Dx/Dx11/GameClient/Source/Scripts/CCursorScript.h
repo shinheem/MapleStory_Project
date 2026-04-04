@@ -14,6 +14,7 @@ private:
     int             m_iFromIdx;     // 어디서 가져왔는지 저장
     int             m_iFromType;    // 어느 탭에서 가져왔는지 저장
     INVEN_TYPE      m_eFromType;
+    MOUSE_STATE     m_ePrevState; // 이전 프레임의 마우스 상태 저장
 
     Vec2            m_vMousePos;
 
@@ -30,6 +31,8 @@ public:
 
     CSlotScript* GetHoveredSlot();
     Ptr<tItemInfo> GetPickedItem() { return m_pPickedItem; }
+
+    bool GetDragging() { return m_bIsDragging;  }
 
     void SetPickedItem(Ptr<tItemInfo> _pItem) {
         m_pPickedItem = _pItem;

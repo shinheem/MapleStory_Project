@@ -346,6 +346,8 @@ void AssetMgr::CreateEngineTexture()
 
 	Load<ATexture>(L"Cursor_HoldAni_Atlas", L"Texture\\Maple_MouseUI\\Cursor_Hold\\Cursor_HoldAni_Atlas.png");
 
+	Load<ATexture>(L"Cursor_HoldAni", L"Texture\\Maple_MouseUI\\Cursor_Hold\\Cursor_HoldAni2.png");
+
 	Load<ATexture>(L"Cursor_MouseOver", L"Texture\\Maple_MouseUI\\Cursor_MouseOver\\Cursor_MouseOver_Atlas.png");
 }
 
