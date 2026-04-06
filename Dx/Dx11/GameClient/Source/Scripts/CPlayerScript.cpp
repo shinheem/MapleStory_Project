@@ -126,10 +126,12 @@ void CPlayerScript::Tick()
 	}
 	/* 테스트용 아이템 생성 (F1 ~ F5) */
 
-	m_bGround = false;
+	
 	Change_State();
 	Shoot();
 	ItemCollect();
+
+	m_bGround = false;
 }
 
 void CPlayerScript::Change_State()
@@ -137,144 +139,98 @@ void CPlayerScript::Change_State()
 	Vec3 vPos = Transform()->GetRelativePos();
 	Vec3 vScale = Transform()->GetRelativeScale();
 	Vec3 vRotation = Transform()->GetRelativeRot();
-	
-	m_prevPos = vPos; // 이전 프레임 발판 저장
 
-	/*if (KEY_PRESSED(KEY::UP))
-		vPos.y += m_Speed * DT;
-	if (KEY_PRESSED(KEY::DOWN))
-		vPos.y -= m_Speed * DT;*/
+	m_prevPos = vPos;
 
 	bool bMoveLeft = false;
 	bool bMoveRight = false;
 
-	if (KEY_PRESSED(KEY::RIGHT))
-	{
-		vPos.x += m_Speed * DT;
-		bMoveRight = true;
-	}
+	if (KEY_PRESSED(KEY::RIGHT)) { vPos.x += m_Speed * DT; bMoveRight = true; }
+	if (KEY_PRESSED(KEY::LEFT)) { vPos.x -= m_Speed * DT; bMoveLeft = true; }
 
-	if (KEY_PRESSED(KEY::LEFT))
-	{
-		vPos.x -= m_Speed * DT;
-		bMoveLeft = true;
-	}
-
+	// ===== 1. 점프 입력 처리 (상태값만 변경) =====
 	if (!m_bJump && KEY_PRESSED(KEY::DOWN) && KEY_TAP(KEY::ALT))
 	{
-		m_bDropDown = true;  
-		m_DropTimer = 0.25f;   // 발판 무시 시간
-
+		m_bDropDown = true;
+		m_DropTimer = 0.25f;
 		m_bJump = true;
-		m_fJumpVelocity = 100.f; // 아래로 떨어지게
+		m_fJumpVelocity = 100.f;
+		m_bGround = false; // 입력 즉시 공중 상태로 전환
 	}
 	else if (KEY_TAP(KEY::ALT) && !m_bJump)
 	{
 		m_bJump = true;
 		m_fJumpVelocity = 400.f;
+		m_bGround = false; // 입력 즉시 공중 상태로 전환
 	}
 
-	if (m_bDropDown) // 아래점프
+	if (m_bDropDown)
 	{
 		m_DropTimer -= DT;
-
-		if (m_DropTimer <= 0.f)
-		{
-			m_bDropDown = false;
-		}
+		if (m_DropTimer <= 0.f) m_bDropDown = false;
 	}
 
-	// 로프에 매달려 있을 때 방향키를 누르고 점프를 하면 그쪽 방향으로 점프
+	// 로프 제어 로직 (기존 동일)
 	if (m_bOnRope)
 	{
-		if (KEY_TAP(KEY::ALT) && KEY_PRESSED(KEY::RIGHT))
-		{
-			m_bJump = true;
-			m_bOnRope = false;
-			m_fJumpVelocity = 400.f; // 점프 힘
-		} 
-		else if (KEY_TAP(KEY::ALT) && KEY_PRESSED(KEY::LEFT))
-		{
-			m_bJump = true;
-			m_bOnRope = false;
-			m_fJumpVelocity = 400.f; // 점프 힘
-		}
+		if (KEY_TAP(KEY::ALT) && KEY_PRESSED(KEY::RIGHT)) { m_bJump = true; m_bOnRope = false; m_fJumpVelocity = 400.f; }
+		else if (KEY_TAP(KEY::ALT) && KEY_PRESSED(KEY::LEFT)) { m_bJump = true; m_bOnRope = false; m_fJumpVelocity = 400.f; }
 	}
 
-	//// ===== 중력 적용 =====
+	// ===== 2. 중력 적용 및 애니메이션 판정 =====
+
+	// A. 공중 상태 (점프 중이거나 바닥이 없을 때)
 	if (!m_bGround && !m_bOnRope)
 	{
 		m_fJumpVelocity += m_fGravity * DT;
 		vPos.y += m_fJumpVelocity * DT;
 
-		if(KEY_PRESSED(KEY::UP) && KEY_TAP(KEY::ALT) && m_Jump_Count < 1)
+		if (KEY_PRESSED(KEY::UP) && KEY_TAP(KEY::ALT) && m_Jump_Count < 1)
 		{
-			++m_Jump_Count;
-			m_bJump = true;
-			m_fJumpVelocity = 400.f; // 점프 힘
+			++m_Jump_Count; m_bJump = true; m_fJumpVelocity = 400.f;
 		}
 
-		if (KEY_PRESSED(KEY::RIGHT))
-			GetOwner()->FlipbookRender()->Play(4, 0.f, 1);
+		m_bWalk = false; // 공중에서는 걷기 상태 해제
 
-		if (KEY_PRESSED(KEY::LEFT))
-			GetOwner()->FlipbookRender()->Play(5, 0.f, 1);
-		
-		if (!bMoveLeft && !bMoveRight && !m_bWalk && KEY_RELEASED(KEY::RIGHT))
+		// 방향에 따른 점프 애니메이션 (좌: 5번, 우: 4번)
+		if (bMoveRight || (!bMoveLeft && GetOwner()->FlipbookRender()->GetCurFlipbookIdx() == 0))
 			GetOwner()->FlipbookRender()->Play(4, 0.f, 1);
-		
-		if (!bMoveLeft && !bMoveRight && !m_bWalk && KEY_RELEASED(KEY::LEFT))
+		else if (bMoveLeft || (!bMoveRight && GetOwner()->FlipbookRender()->GetCurFlipbookIdx() == 1))
 			GetOwner()->FlipbookRender()->Play(5, 0.f, 1);
-
 	}
+	// B. 지상 상태 (착지 완료)
 	else if (!m_bJump)
 	{
-		if (KEY_PRESSED(KEY::RIGHT) && KEY_PRESSED(KEY::LEFT))
-		{
-			bMoveLeft = false;
-			bMoveRight = false;
-		}
+		if (KEY_PRESSED(KEY::RIGHT) && KEY_PRESSED(KEY::LEFT)) { bMoveLeft = false; bMoveRight = false; }
 
-		// 왼쪽으로 가다가 양쪽 방향키 눌렀을 시 왼쪽으로 서있는 모션
-		if (!bMoveLeft && !bMoveRight && m_bWalk && KEY_PRESSED(KEY::LEFT))
+		// 이동 중이 아닐 때 (Idle)
+		if (!bMoveLeft && !bMoveRight)
 		{
-			GetOwner()->FlipbookRender()->Play(1, 2.f, -1);
-			m_bWalk = false;
-		} 
-		// 오른쪽으로 가다가 양쪽 방향키 눌렀을 시 왼쪽으로 서있는 모션
-		else if (!bMoveLeft && !bMoveRight && m_bWalk && KEY_PRESSED(KEY::RIGHT))
-		{
-			GetOwner()->FlipbookRender()->Play(0, 2.f, -1);
-			m_bWalk = false;
-		}
+			UINT iCurIdx = GetOwner()->FlipbookRender()->GetCurFlipbookIdx();
 
-		if (!bMoveLeft && !bMoveRight && m_bWalk && KEY_RELEASED(KEY::LEFT)) // 왼쪽으로 서있는 모션
-		{
-			GetOwner()->FlipbookRender()->Play(1, 2.f, -1);
-			m_bWalk = false;
-		}
-		else if (!bMoveLeft && !bMoveRight && m_bWalk && KEY_RELEASED(KEY::RIGHT)) // 오른쪽으로 서있는 모션
-		{
-			GetOwner()->FlipbookRender()->Play(0, 2.f, -1);
-			m_bWalk = false;
-		}
+			// 걷고 있었거나, 현재 애니메이션이 점프 모션(4, 5)이라면 Idle로 전환
+			if (m_bWalk || iCurIdx == 4 || iCurIdx == 5 || KEY_RELEASED(KEY::LEFT) || KEY_RELEASED(KEY::RIGHT))
+			{
+				if (iCurIdx == 5 || KEY_RELEASED(KEY::LEFT)) GetOwner()->FlipbookRender()->Play(1, 2.f, -1);
+				else GetOwner()->FlipbookRender()->Play(0, 2.f, -1);
 
-		if (bMoveRight && !m_bWalk) // 오른쪽으로 걷는 모션
-		{
-			GetOwner()->FlipbookRender()->Play(2, 8.f, -1);
-			m_bWalk = true;
+				m_bWalk = false;
+			}
 		}
-		else if (bMoveLeft && !m_bWalk) // 왼쪽으로 걷는 모션
+		// 걷기 중일 때i
+		else
 		{
-			GetOwner()->FlipbookRender()->Play(3, 8.f, -1);
-			m_bWalk = true;
-		} 
+			if (bMoveRight && !m_bWalk) { GetOwner()->FlipbookRender()->Play(2, 8.f, -1); m_bWalk = true; }
+			else if (bMoveLeft && !m_bWalk) { GetOwner()->FlipbookRender()->Play(3, 8.f, -1); m_bWalk = true; }
+		}
 	}
 
 	Transform()->SetRelativePos(vPos);
 	Transform()->SetRelativeScale(vScale);
 	Transform()->SetRelativeRot(vRotation);
 }
+
+
 void CPlayerScript::Shoot()
 {
 	if (KEY_TAP(KEY::SPACE))
@@ -328,6 +284,7 @@ void CPlayerScript::OnOverlap(CCollider2D* _MyCol, CCollider2D* _OtherCol)
 	GameObject* Other = _OtherCol->GetOwner();
 
 	Vec3 vPos = Transform()->GetRelativePos();
+	Vec3 vScale = Transform()->GetRelativeScale();
 		
 	Vec3 otherPos = Other->Transform()->GetRelativePos();
 	Vec3 otherScale = Other->Transform()->GetRelativeScale();
@@ -356,6 +313,61 @@ void CPlayerScript::OnOverlap(CCollider2D* _MyCol, CCollider2D* _OtherCol)
 
 	}
 	// ===== 발판 착지 =====
+
+	// ===== Wall(벽) =====
+	if (Other->GetName() == L"Wall")
+	{
+		// 캐릭터와 벽의 경계선 계산
+		float playerTop = vPos.y + myScale.y * 0.5f;
+		float playerBottom = vPos.y - myScale.y * 0.5f;
+		float playerLeft = vPos.x - myScale.x * 0.5f;
+		float playerRight = vPos.x + myScale.x * 0.5f;
+
+		float prevTop = m_prevPos.y + myScale.y * 0.5f;
+		float prevBottom = m_prevPos.y - myScale.y * 0.5f;
+		float prevLeft = m_prevPos.x - myScale.x * 0.5f;
+		float prevRight = m_prevPos.x + myScale.x * 0.5f;
+
+		float wallTop = otherPos.y + otherScale.y * 0.5f;
+		float wallBottom = otherPos.y - otherScale.y * 0.5f;
+		float wallLeft = otherPos.x - otherScale.x * 0.5f;
+		float wallRight = otherPos.x + otherScale.x * 0.5f;
+
+		// 약간의 오차 허용 범위 (캐릭터가 벽에 살짝 걸쳤을 때 뚫리는 것 방지)
+		float epsilon = 5.0f;
+
+		// 1. 천장 판정 (머리가 닿았을 때)
+		// 이전 프레임에 머리가 벽 하단보다 아래 있었고, 현재 머리가 벽 하단보다 높다면
+		if (prevTop <= wallBottom + epsilon && playerTop > wallBottom)
+		{
+			// 머리가 벽의 좌우 범위 안에 들어와 있을 때만 천장으로 처리
+			if (playerRight > wallLeft + epsilon && playerLeft < wallRight - epsilon)
+			{
+				vPos.y = wallBottom - myScale.y * 0.5f; // Y좌표만 고정 (X는 자유)
+				if (m_fJumpVelocity > 0.f) m_fJumpVelocity = 0.f;
+			}
+		}
+
+		// 2. 좌우 벽 판정 (옆면 충돌)
+		// 천장 판정을 거친 후에도 여전히 벽 내부에 있다면 (혹은 옆에서 접근 중이라면)
+		// 이 처리를 해야 "옆으로 가면 못 가야 하는" 기능이 작동합니다.
+		if (playerTop > wallBottom + epsilon && playerBottom < wallTop - epsilon)
+		{
+			// 왼쪽에서 오른쪽으로 이동 중 벽에 부딪힘
+			if (prevRight <= wallLeft + epsilon && playerRight > wallLeft)
+			{
+				vPos.x = wallLeft - myScale.x * 0.5f;
+			}
+			// 오른쪽에서 왼쪽으로 이동 중 벽에 부딪힘
+			else if (prevLeft >= wallRight - epsilon && playerLeft < wallRight)
+			{
+				vPos.x = wallRight + myScale.x * 0.5f;
+			}
+		}
+
+		Transform()->SetRelativePos(vPos);
+	}
+	// ===== Wall(벽) =====
 
 	// ===== Rope 처리 =====
 	if (Other->GetName() == L"Rope")

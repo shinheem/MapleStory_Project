@@ -44,14 +44,14 @@ void CEditorCamMoveScript::MovePerspective()
 		vPos -= vFront * 10.f;*/
 
 
-	/*if (KEY_PRESSED(KEY::W))
+	if (KEY_PRESSED(KEY::W))
 		vPos += vFront * Speed * E_DT;
 	if (KEY_PRESSED(KEY::S))
 		vPos -= vFront * Speed * E_DT;
 	if (KEY_PRESSED(KEY::A))
 		vPos -= vRight * Speed * E_DT;
 	if (KEY_PRESSED(KEY::D))
-		vPos += vRight * Speed * E_DT;*/
+		vPos += vRight * Speed * E_DT;
 
 	/*if (KEY_PRESSED(KEY::RBTN))
 	{
@@ -68,7 +68,7 @@ void CEditorCamMoveScript::MoveOrthographic()
 {
 	Vec3 vPos = Transform()->GetRelativePos();
 
-	/*float Speed = m_Speed;
+	float Speed = m_Speed;
 	if (KEY_PRESSED(KEY::LSHIFT))
 		Speed *= 3.f;
 
@@ -80,7 +80,7 @@ void CEditorCamMoveScript::MoveOrthographic()
 	if (KEY_PRESSED(KEY::A))
 		vPos.x -= E_DT * Speed;
 	if (KEY_PRESSED(KEY::D))
-		vPos.x += E_DT * Speed;*/
+		vPos.x += E_DT * Speed;
 
 	Transform()->SetRelativePos(vPos);
 	Transform()->SetRelativeRot(Vec3(0.f, 0.f, 0.f));

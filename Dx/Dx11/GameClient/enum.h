@@ -220,3 +220,10 @@ enum class MOUSE_STATE
 	SLOT_HOVER,
 	HOLD
 };
+
+enum class FADE_STATE 
+{
+	FADE_IN,
+	FADE_OUT,
+	NONE 
+};

@@ -16,9 +16,13 @@ public:
 	Ptr<GameObject> FindObjectByName(const wstring& _name);	
 	LEVEL_STATE GetLevelState() { return m_LevelState; }
 	
+
+
 private:
 	void ChangeLevel(Ptr<ALevel> _NextLevel);
 	void ChangeLevelState(LEVEL_STATE _NextState);
+
+	void EnterLevel(Ptr<ALevel> _NextLevel);
 
 public:
 	void Init();

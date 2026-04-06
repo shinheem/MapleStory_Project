@@ -5,6 +5,7 @@
 #include "EditorMgr.h"
 #include "ContentUI.h"
 #include "LevelMgr.h"
+#include "TaskMgr.h"
 
 #include "Inspector.h"
 #include "GameObject.h"
@@ -20,6 +21,7 @@ Menu::Menu()
 	, m_bCollisionWindow(false)
 	, m_bLayerNameWindow(false)
 	, m_bCreateMaterialWindow(false)
+	, m_bCreateLevelWindow(false)
 	, m_CollisionMatrix{}
 {
 }
@@ -64,6 +66,9 @@ void Menu::Tick()
 		if (m_bCreateMaterialWindow)
 			CreateMaterialWindow();
 
+		if (m_bCreateLevelWindow)
+			CreateLevelWindow();
+
 		ImGui::EndMainMenuBar();
 	}
 }
@@ -75,12 +80,52 @@ void Menu::File()
 {
 	if (ImGui::BeginMenu("File"))
 	{
-		if (ImGui::MenuItem("Level Save"))
+		// 1. 새 레벨 생성 (도화지 새로 만들기)
+		if (ImGui::MenuItem("New Level"))
 		{
+			m_bCreateLevelWindow = true;
 		}
 
-		if (ImGui::MenuItem("Level Load"))
+		ImGui::Separator();
+
+		// 2. 현재 레벨 저장 (이미 이름이 있는 경우 해당 이름으로, 없으면 기본 이름으로)
+		if (ImGui::MenuItem("Level Save", "Ctrl+S"))
 		{
+			Ptr<ALevel> pCurLevel = LevelMgr::GetInst()->GetCurLevel();
+			if (pCurLevel != nullptr)
+			{
+				wstring saveName = pCurLevel->GetName();
+				// 확장자가 이미 있다면 붙이지 않고, 없다면 붙여줌
+				if (saveName.find(L".lv") == wstring::npos)
+					saveName += L".lv";
+
+				wstring savePath = CONTENT_PATH + L"Level\\" + saveName;
+				pCurLevel->Save(savePath);
+			}
+		}
+
+		// 3. 레벨 불러오기 (간단한 구현을 위해 일단 로직만 배치)
+		// 실제로는 파일 선택창(ImGui FileBrowser 등)을 띄우는 것이 좋습니다.
+		if (ImGui::MenuItem("Level Load", "Ctrl+L"))
+		{
+			// 예시로 작성된 로드 로직
+			wstring loadPath = L"Level\\Hontail_Boss_Level.lv";
+			Ptr<ALevel> pLevel = AssetMgr::GetInst()->Load<ALevel>(loadPath, loadPath);
+
+			if (pLevel != nullptr)
+			{
+				// [핵심] static 변수로 경로 문자열을 고정
+				static wstring s_LoadPath;
+				s_LoadPath = loadPath;
+
+				TaskInfo info = {};
+				info.Type = TASK_TYPE::CHANGE_LEVEL;
+
+				// TaskMgr가 다음 프레임에 읽을 때까지 살아있음
+				info.Param_0 = (DWORD_PTR)s_LoadPath.c_str();
+
+				TaskMgr::GetInst()->AddTask(info);
+			}
 		}
 
 		ImGui::EndMenu();
@@ -627,4 +672,65 @@ void Menu::CreateMaterial(const char* matName, const char* texName)
 	// 저장
 	std::wstring path = CONTENT_PATH + L"Material\\" + wMatName + L".mtrl";
 	pMtrl->Save(path);
+}
+
+void Menu::CreateLevelWindow()
+{
+	// 팝업을 열어야 하는 상태인지 체크
+	if (m_bCreateLevelWindow)
+	{
+		ImGui::OpenPopup("Create New Level");
+		// m_bCreateLevelWindow 변수와 연동하여 창이 닫히면 false가 되도록 설정
+		if (ImGui::BeginPopupModal("Create New Level", &m_bCreateLevelWindow, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			static char levelName[64] = "NewLevel";
+			ImGui::InputText("Name", levelName, IM_ARRAYSIZE(levelName));
+
+			if (ImGui::Button("Create", ImVec2(120, 0)))
+			{
+				// 실제 로직 함수 호출
+				CreateNewLevel(levelName);
+
+				m_bCreateLevelWindow = false;
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Cancel", ImVec2(120, 0)))
+			{
+				m_bCreateLevelWindow = false;
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+	}
+}
+
+void Menu::CreateNewLevel(const char* _name)
+{
+	if (strlen(_name) == 0) return;
+
+	Ptr<ALevel> pNewLevel = new ALevel;
+	wstring wName = StrToWstr(_name);
+
+	// 확장자가 없다면 붙여주는 것이 좋습니다.
+	if (wName.find(L".lv") == wstring::npos)
+		wName += L".lv";
+
+	pNewLevel->SetName(wName);
+	AssetMgr::GetInst()->AddAsset(wName, pNewLevel.Get());
+
+	static wstring s_NewLevelName;
+	s_NewLevelName = wName;
+
+	TaskInfo info = {};
+	info.Type = TASK_TYPE::CHANGE_LEVEL;
+	info.Param_0 = (DWORD_PTR)s_NewLevelName.c_str();
+
+	TaskMgr::GetInst()->AddTask(info);
+
+	// 인스펙터 타겟 초기화
+	Ptr<Inspector> pInspector = (Inspector*)EditorMgr::GetInst()->FindUI("Inspector").Get();
+	if (pInspector) pInspector->SetTargetObject(nullptr);
 }

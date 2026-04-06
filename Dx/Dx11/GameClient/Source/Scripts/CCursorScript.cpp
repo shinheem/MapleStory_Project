@@ -29,7 +29,7 @@ CCursorScript::~CCursorScript()
 
 void CCursorScript::Begin()
 {
-    ShowCursor(FALSE);
+    //ShowCursor(FALSE);
 
     // 자식들 중 이름이 "CursorIcon"인 녀석을 찾아서 저장
     const vector<Ptr<GameObject>>& vecChild = GetOwner()->GetChild();

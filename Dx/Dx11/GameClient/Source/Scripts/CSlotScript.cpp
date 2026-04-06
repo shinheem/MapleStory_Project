@@ -26,69 +26,32 @@ void CSlotScript::Tick()
 {
 }
 
-void CSlotScript::SetSlotInfo(Ptr<tItemInfo> _pInfo)
-{
-    // 아이템이 없으면 메쉬렌더를 밀어버림
-    if (nullptr == _pInfo)
-    {
-        if (GetOwner()->MeshRender())
-            GetOwner()->MeshRender()->SetMaterial(nullptr);
-        return;
-    }
-
-    // 아이템이 있으면 해당 아이콘 재질(Material)을 셋팅
-    if (GetOwner()->MeshRender())
-    {
-        GetOwner()->MeshRender()->SetMaterial(_pInfo->pIcon);
-    }
-}
-
 void CSlotScript::SetItem(Ptr<tItemInfo> _pItem)
 {
+    // 1. 데이터 업데이트
     m_pTargetItem = _pItem;
 
-    // 1. 슬롯 본체의 메쉬렌더러에 아이콘 재질 적용
-    // (tItemInfo 구조체에서 pIcon이 Material이므로 직접 셋팅합니다)
-    if (nullptr != m_pTargetItem)
-    {
-        if (GetOwner()->MeshRender())
-        {
-            GetOwner()->MeshRender()->SetMaterial(m_pTargetItem->pIcon);
-        }
-    }
-    else
-    {
-        if (GetOwner()->MeshRender())
-        {
-            GetOwner()->MeshRender()->SetMaterial(nullptr);
-        }
-    }
+    // 2. 슬롯 본체의 MeshRender를 가져옴
+    Ptr<CMeshRender> pMeshRender = GetOwner()->MeshRender();
 
-    // 2. 만약 별도의 자식 오브젝트(ItemIcon)를 사용하여 Active/Inactive를 관리한다면 아래 로직 유지
-    GameObject* pIconObj = nullptr;
-    const vector<Ptr<GameObject>>& vecChild = GetOwner()->GetChild();
-
-    for (size_t i = 0; i < vecChild.size(); ++i)
-    {
-        if (vecChild[i]->GetName() == L"ItemIcon")
-        {
-            pIconObj = vecChild[i].Get();
-            break;
-        }
-    }
-
-    if (nullptr != pIconObj)
+    if (nullptr != pMeshRender)
     {
         if (nullptr != m_pTargetItem)
         {
-            pIconObj->SetActive(true);
-            // 자식 오브젝트가 실제 아이콘을 그리는 주체라면 여기에도 재질을 넣어줘야 합니다.
-            if (pIconObj->MeshRender())
-                pIconObj->MeshRender()->SetMaterial(m_pTargetItem->pIcon);
+            // 아이템이 있으면: 아이템의 아이콘 재질(Material)을 슬롯에 직접 셋팅
+            pMeshRender->SetMaterial(m_pTargetItem->pIcon);
         }
         else
         {
-            pIconObj->SetActive(false);
+            // 아이템이 없으면: 슬롯을 비움 (기본 빈 칸 재질이 있다면 그걸로 교체 가능)
+            // 일단 nullptr로 밀어버리면 아무것도 안 그려집니다.
+            pMeshRender->SetMaterial(nullptr);
         }
     }
+}
+
+// 기존에 사용하던 SetSlotInfo도 내부적으로 SetItem을 호출하게 통일
+void CSlotScript::SetSlotInfo(Ptr<tItemInfo> _pInfo)
+{
+    SetItem(_pInfo);
 }

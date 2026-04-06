@@ -143,14 +143,29 @@ int ALevel::Save(const wstring& _FilePath)
 		// 레이어의 이름 저장
 		SaveWString(pFile, m_arrLayer[i].GetName());
 
-		// 레이어 소속 최상위 부모 오브젝트를 계층구조로 저장한다.
 		const vector<Ptr<GameObject>>& vecParents = m_arrLayer[i].GetParentObjects();
 
-		// 오브젝트 개수
-		size_t parentCount = vecParents.size();
+		// [추가] 실제로 저장할 오브젝트들만 따로 선별 (필터링)
+		vector<Ptr<GameObject>> SaveTargetObjects;
+		for (const auto& Object : vecParents)
+		{
+			// 파일에 저장하지 않을 제외 대상 이름들
+			if (Object->GetName() == L"Maple_Player" ||
+				Object->GetName() == L"MainCamera" ||
+				Object->GetName() == L"GlobalUI"
+				)
+			{
+				continue;
+			}
+			SaveTargetObjects.push_back(Object);
+		}
+
+		// [수정] 전체 개수가 아니라 필터링된 개수를 저장
+		size_t parentCount = SaveTargetObjects.size();
 		fwrite(&parentCount, sizeof(size_t), 1, pFile);
 
-		for (const auto& Object : vecParents)
+		// [수정] 선별된 오브젝트들만 저장 실행
+		for (const auto& Object : SaveTargetObjects)
 		{
 			Object->SaveToLevelFile(pFile);
 		}
@@ -247,4 +262,17 @@ void ALevel::UncheckCollisionLayer(UINT _LayerIdx1, UINT _LayerIdx2)
     // 비트 해제: XOR 대신 AND + NOT 사용
     m_Matrix[_LayerIdx1] &= ~(1 << _LayerIdx2);
     m_Matrix[_LayerIdx2] &= ~(1 << _LayerIdx1); // 양방향 해제
+}
+
+void ALevel::CopyLogicSettings(Ptr<ALevel> _pOther)
+{
+	for (int i = 0; i < MAX_LAYER; ++i)
+	{
+		// 1. 레이어 이름 복사
+		this->GetLayer(i)->SetName(_pOther->GetLayer(i)->GetName());
+
+		// 2. 충돌 매트릭스 복사
+		// 내부적으로 m_LayerMasks[i] 등을 사용 중이라면 그대로 대입합니다.
+		this->m_Matrix[i] = _pOther->m_Matrix[i];
+	}
 }

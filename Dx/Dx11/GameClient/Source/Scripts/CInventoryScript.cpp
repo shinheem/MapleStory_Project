@@ -23,8 +23,8 @@ CInventoryScript::CInventoryScript()
 void CInventoryScript::Begin()
 {
     // 1. 중복 실행 방지 (자식 객체이거나 이미 데이터가 있다면 리턴)
-    if (GetOwner()->GetParent() != nullptr) return;
-    if (!m_vecTabContents.empty()) return;
+    //if (GetOwner()->GetParent() != nullptr) return;
+    //if (!m_vecTabContents.empty()) return;
 
     // 2. 인벤토리 데이터 배열 초기화 (24칸씩)
     for (int i = 0; i < (int)INVEN_TYPE::END; ++i)
@@ -109,7 +109,7 @@ CInventoryScript::~CInventoryScript()
 
 void CInventoryScript::Tick()
 {
-    if (GetOwner()->GetParent() != nullptr) return;
+    //if (GetOwner()->GetParent() != nullptr) return;
 
     // --- 1. 키보드 입력 처리 ---
     if (KEY_TAP(KEY::I))

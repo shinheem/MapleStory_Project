@@ -12,6 +12,7 @@ private:
     bool m_bCollisionWindow;
     bool m_bLayerNameWindow;
     bool m_bCreateMaterialWindow;
+    bool m_bCreateLevelWindow;
 
     vector<vector<bool>> m_CollisionMatrix;
 
@@ -36,7 +37,21 @@ public:
     void UpdateayerNameEditorWindow();
     void AddLayerToCollisionMatrix();
     void RemoveLayerFromCollisionMatrix(int layerIdx);
+    void CreateLevelWindow(); // UI 그리기 함수
+    void CreateNewLevel(const char* _name); // 실제 로직 함수
 
+    wstring StrToWstr(const string& str)
+    {
+        if (str.empty()) return wstring();
+
+        // 필요한 버퍼 크기 계산
+        int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
+
+        wstring wstrTo(size_needed, 0);
+        MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
+
+        return wstrTo;
+    }
 
     virtual void Tick() override;
     virtual void Tick_UI() override;

@@ -57,7 +57,7 @@ public:
     }
 
     void SetChanged() { m_Changed = true; }
-
+    void CopyLogicSettings(Ptr<ALevel> _pOther);
 
 public:
     void Begin();

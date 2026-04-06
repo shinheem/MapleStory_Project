@@ -4,8 +4,10 @@
 #include "PathMgr.h"
 #include "LevelMgr.h"
 #include "TaskMgr.h"
+#include "AssetMgr.h"
 #include "Source\ScriptMgr.h"
 
+#include "ALevel.h"
 #include "GameObject.h"
 #include "CFlipbookRender.h"
 
@@ -18,11 +20,18 @@
 #include "Source\Scripts\CInventoryScript.h"
 #include "Source\Scripts\CGaugeBarScript.h"
 
+#include <filesystem>
+namespace fs = std::filesystem;
+
 Inspector::Inspector()
     : EditorUI("Inspector")
+    , m_SelectedLevelIdx(-1)
 {
     CreateChildUI();
     SetTargetObject(nullptr);
+
+    // 처음에 목록 한 번 갱신
+    RefreshLevelList();
 }
 
 Inspector::~Inspector()
@@ -123,6 +132,21 @@ void Inspector::AddComponents()
                 }
             }
 
+            // Light
+            if (nullptr == m_TargetObject->GetComponent(COMPONENT_TYPE::LIGHT2D))
+            {
+                if (ImGui::Button("Add Light2D"))
+                {
+                    TaskInfo info{};
+                    info.Type = TASK_TYPE::ADD_COMPONENT;
+                    info.Param_0 = (DWORD_PTR)m_TargetObject.Get();
+                    info.Param_1 = (DWORD_PTR)new CLight2D;
+                    TaskMgr::GetInst()->AddTask(info);
+
+                    m_arrComUI[(UINT)COMPONENT_TYPE::LIGHT2D]->SetActive(true);
+                }
+            }
+
             // Collider2D
             if (nullptr == m_TargetObject->GetComponent(COMPONENT_TYPE::COLLIDER2D))
             {
@@ -178,7 +202,7 @@ void Inspector::AddScriptUI()
             BOSSPARTSCRIPT, CAMMOVESCRIPT, HONTAILBOSSSCRIPT,
             MISSILESCRIPT, MONSTERSCRIPT, PLAYERSCRIPT, 
             INVENTORYSCRIPT, GAUGEBARSCRIPT, SLOTSCRIPT,
-            ITEMSCRIPT, CURSORSCRIPT
+            ITEMSCRIPT, CURSORSCRIPT, FADESCRIPT
         };
 
         for (SCRIPT_TYPE type : AllScripts)
@@ -338,9 +362,102 @@ void Inspector::DrawLayerSelectorUI(Ptr<GameObject> targetObject)
     }
 }
 
-// UI Tick
+void Inspector::RefreshLevelList()
+{
+    m_vecLevelNames.clear();
+    wstring levelPath = CONTENT_PATH;
+    levelPath += L"Level\\";
+
+    if (!fs::exists(levelPath)) return;
+
+    for (const auto& entry : fs::directory_iterator(levelPath))
+    {
+        if (entry.is_regular_file() && entry.path().extension() == ".lv")
+        {
+            m_vecLevelNames.push_back(entry.path().stem().string());
+        }
+    }
+}
+
 void Inspector::Tick_UI()
 {
+    // --- 1. 레벨 매니저 섹션 (파일 리스트 및 로드/저장) ---
+    if (ImGui::CollapsingHeader("Level Manager", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        // 목록 갱신 버튼
+        if (ImGui::Button("Refresh List")) { RefreshLevelList(); }
+
+        ImGui::SameLine();
+        string currentName = m_SelectedLevelIdx != -1 ? m_vecLevelNames[m_SelectedLevelIdx] : "None";
+        ImGui::Text("Selected: %s", currentName.c_str());
+
+        // 레벨 파일 리스트 박스
+        if (ImGui::BeginListBox("##LevelList", ImVec2(-FLT_MIN, 100.f)))
+        {
+            for (int i = 0; i < (int)m_vecLevelNames.size(); ++i)
+            {
+                const bool is_selected = (m_SelectedLevelIdx == i);
+                if (ImGui::Selectable(m_vecLevelNames[i].c_str(), is_selected))
+                {
+                    m_SelectedLevelIdx = i;
+                }
+            }
+            ImGui::EndListBox();
+        }
+
+        // 선택된 레벨이 있을 때만 로드/저장 버튼 활성화
+        if (m_SelectedLevelIdx != -1)
+        {
+            // [Load] 버튼 수정 부분
+            if (ImGui::Button("Load Selected", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 0)))
+            {
+                // 1. 불러올 파일명 계산
+                wstring fileName = StrToWstr(m_vecLevelNames[m_SelectedLevelIdx]);
+                wstring relativePath = L"Level\\" + fileName + L".lv";
+
+                // 2. AssetMgr에 로드 (이때 relativePath가 Key값이 됨)
+                Ptr<ALevel> pNextLevel = AssetMgr::GetInst()->Load<ALevel>(relativePath, relativePath);
+
+                if (nullptr != pNextLevel)
+                {
+                    // [핵심] static 변수를 사용하여 메모리를 고정합니다.
+                    // 이 변수는 함수가 끝나도 파괴되지 않고 다음 프레임까지 주소값을 유지합니다.
+                    static wstring s_SafePath;
+                    s_SafePath = relativePath;
+
+                    TaskInfo info = {};
+                    info.Type = TASK_TYPE::CHANGE_LEVEL;
+
+                    // s_SafePath의 주소를 넘깁니다. 
+                    // TaskMgr가 다음 프레임에 이 주소를 참조해도 s_SafePath는 살아있으므로 안전합니다.
+                    info.Param_0 = (DWORD_PTR)s_SafePath.c_str();
+
+                    TaskMgr::GetInst()->AddTask(info);
+
+                    SetTargetObject(nullptr);
+                    return;
+                }
+            }
+
+            ImGui::SameLine();
+
+            // [Save] 버튼
+            if (ImGui::Button("Save to Selected", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
+            {
+                Ptr<ALevel> pCurLevel = LevelMgr::GetInst()->GetCurLevel();
+                if (pCurLevel != nullptr)
+                {
+                    wstring fileName = StrToWstr(m_vecLevelNames[m_SelectedLevelIdx]);
+                    pCurLevel->Save(CONTENT_PATH + L"Level\\" + fileName + L".lv");
+                }
+            }
+        }
+    }
+
+    ImGui::Separator();
+    // ---------------------------------------------------
+
+    // --- 2. 기존 Inspector 로직 ---
     float buttonWidth = 40.f;
 
     if (nullptr == m_TargetObject)
@@ -355,19 +472,56 @@ void Inspector::Tick_UI()
     ImGui::SameLine();
     ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x + ImGui::GetCursorPosX() - buttonWidth);
 
-    if (ImGui::Button("Save##LevelSaveBtn"))
+    /*if (ImGui::Button("Save##LevelSaveBtn"))
     {
         Ptr<ALevel> level = LevelMgr::GetInst()->GetCurLevel();
-        level->Save(CONTENT_PATH + L"Level\\TestLevel.lv");
-    }
+        wstring saveName = L"";
+        if (m_SelectedLevelIdx != -1)
+            saveName = StrToWstr(m_vecLevelNames[m_SelectedLevelIdx]) + L".lv";
+
+        level->Save(CONTENT_PATH + L"Level\\" + saveName);
+    }*/
 
     ImGui::Separator();
 
-    // 기존 Component 추가 UI
     AddComponents();
-
-    // Script Add/Remove UI
     AddScriptUI();
-
     DrawLayerSelectorUI(m_TargetObject);
+
+    UpdatePrefabButtons();
+}
+
+void Inspector::UpdatePrefabButtons()
+{
+    if (nullptr == m_TargetObject) return;
+
+    ImGui::Separator();
+    if (ImGui::Button("Save as Prefab", ImVec2(150, 30)))
+    {
+        CreatePrefabFromTarget();
+    }
+}
+void Inspector::CreatePrefabFromTarget()
+{
+    if (nullptr == m_TargetObject) return;
+
+    // 1. 현재 타겟 오브젝트를 복사 (Clone)
+    // 원본 객체를 직접 넣으면 레벨에서 삭제될 때 프리팹도 깨질 수 있으므로 복사본을 만듭니다.
+    GameObject* pClone = m_TargetObject->Clone();
+
+    // 2. 프리팹 에셋 생성
+    Ptr<APrefab> pNewPrefab = new APrefab;
+    pNewPrefab->SetObject(pClone);
+
+    // 3. 경로 결정 (예: Prefab 폴더 아래 오브젝트 이름으로)
+    wstring PrefabName = L"Prefab\\" + m_TargetObject->GetName() + L".pref";
+
+    // 4. 에셋 매니저에 등록 및 파일 저장
+    AssetMgr::GetInst()->AddAsset(PrefabName, pNewPrefab.Get());
+
+    wstring FullPath = CONTENT_PATH + PrefabName;
+    pNewPrefab->Save(FullPath);
+
+    // 알림 (로그 창이 있다면 출력)
+    // LogMgr::AddLog(L"Prefab Saved: " + PrefabName);
 }

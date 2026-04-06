@@ -298,9 +298,33 @@ void AssetMgr::CreateEngineTexture()
 
 	Load<ATexture>(L"Maple_Jump_Left", L"Texture\\Maple_Jump\\Jump_Left.png");
 
-	Load<ATexture>(L"Horn_Tail_BackGround1", L"Texture\\Horn_Tail_BackGround1.png");
+	Load<ATexture>(L"Horn_Tail_BackGround1", L"Texture\\HornTail_BackGround\\Boss\\Horn_Tail_BackGround1.png");
 
-	Load<ATexture>(L"Horn_Tail_BackGround2", L"Texture\\Horn_Tail_BackGround2.png");
+	Load<ATexture>(L"Horn_Tail_BackGround2", L"Texture\\HornTail_BackGround\\Boss\\Horn_Tail_BackGround2.png");
+
+	Load<ATexture>(L"Hontail_Entrance_0", L"Texture\\HornTail_BackGround\\Entrance\\Hontail_Entrance_0.png");
+
+	Load<ATexture>(L"Hontail_Entrance_1", L"Texture\\HornTail_BackGround\\Entrance\\Hontail_Entrance_1.png");
+
+	Load<ATexture>(L"Hontail_Entrance_2", L"Texture\\HornTail_BackGround\\Entrance\\Hontail_Entrance_2.png");
+
+	Load<ATexture>(L"Hontail_Entrance_3", L"Texture\\HornTail_BackGround\\Entrance\\Hontail_Entrance_3.png");
+
+	Load<ATexture>(L"Hontail_Entrance_Atlas", L"Texture\\HornTail_BackGround\\Entrance\\Hontail_Entrance_Atlas.png");
+
+	Load<ATexture>(L"Dungeon_Back_1", L"Texture\\HornTail_BackGround\\Dungeon\\Dungeon_Back_1.png");
+
+	Load<ATexture>(L"Dungeon_Back_2", L"Texture\\HornTail_BackGround\\Dungeon\\Dungeon_Back_2.png");
+
+	Load<ATexture>(L"Dungeon_Back_3", L"Texture\\HornTail_BackGround\\Dungeon\\Dungeon_Back_3.png");
+
+	Load<ATexture>(L"Hontail_Left_Back_0", L"Texture\\HornTail_BackGround\\Left_Room\\Hontail_Left_0.png");
+
+	Load<ATexture>(L"Hontail_Left_Back_1", L"Texture\\HornTail_BackGround\\Left_Room\\Hontail_Left_1.png");
+
+	Load<ATexture>(L"Hontail_Right_Back_0", L"Texture\\HornTail_BackGround\\Right_Room\\Hontail_Right_0.png");
+
+	Load<ATexture>(L"Hontail_Right_Back_1", L"Texture\\HornTail_BackGround\\Right_Room\\Hontail_Right_1.png");
 
 	Load<ATexture>(L"Maple_Inventory", L"Texture\\MapleStory_UI\\InventoryUI\\Inventory.png");
 

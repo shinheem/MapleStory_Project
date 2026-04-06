@@ -16,6 +16,7 @@ enum SCRIPT_TYPE
 	SLOTSCRIPT,
 	ITEMSCRIPT,
 	CURSORSCRIPT,
+	FADESCRIPT,
 };
 
 using namespace std;
