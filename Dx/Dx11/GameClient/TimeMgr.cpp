@@ -56,6 +56,9 @@ void TimeMgr::Tick()
 		m_Time -= 1.f;
 	}
 
+	if (m_DeltaTime > (1.f / 60.f))
+		m_DeltaTime = (1.f / 60.f);
+
 
 	// Game Engine용 Time
 	g_Global.EngineDT = m_DeltaTime;

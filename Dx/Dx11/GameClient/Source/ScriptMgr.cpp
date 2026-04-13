@@ -13,6 +13,11 @@
 #include "Scripts/CItemScript.h"
 #include "Scripts/CCursorScript.h" 
 #include "Scripts/CFadeScript.h"
+#include "Scripts/CMonsterSpawner.h"
+#include "Scripts/CPortalScript.h"
+#include "Scripts/CLeftBossAloneScript.h"
+#include "Scripts/CRightBossAloneScript.h"
+#include "Scripts/CAttackEffectScript.h"
 
 void ScriptMgr::GetScriptInfo(vector<wstring>& _vec)
 {
@@ -28,6 +33,11 @@ void ScriptMgr::GetScriptInfo(vector<wstring>& _vec)
 	_vec.push_back(L"CItemScript");
 	_vec.push_back(L"CCursorScript");
 	_vec.push_back(L"CFadeScript");
+	_vec.push_back(L"CMonsterSpawner");
+	_vec.push_back(L"CPortalScript");
+	_vec.push_back(L"CLeftBossAloneScript");
+	_vec.push_back(L"CRightBossAloneScript");
+	_vec.push_back(L"CAttackEffectScript");
 }
 
 CScript * ScriptMgr::GetScript(const wstring& _strScriptName)
@@ -56,6 +66,16 @@ CScript * ScriptMgr::GetScript(const wstring& _strScriptName)
 		return new CCursorScript;
 	if (L"CFadeScript" == _strScriptName)
 		return new CFadeScript;
+	if (L"CMonsterSpawner" == _strScriptName)
+		return new CMonsterSpawner;
+	if (L"CPortalScript" == _strScriptName)
+		return new CPortalScript;
+	if (L"CLeftBossAloneScript" == _strScriptName)
+		return new CLeftBossAloneScript;
+	if (L"CRightBossAloneScript" == _strScriptName)
+		return new CRightBossAloneScript;
+	if (L"CAttackEffectScript" == _strScriptName)
+		return new CAttackEffectScript;
 	return nullptr;
 }
 
@@ -98,6 +118,21 @@ CScript * ScriptMgr::GetScript(UINT _iScriptType)
 		break;
 	case (UINT)SCRIPT_TYPE::FADESCRIPT:
 		return new CFadeScript;
+		break;
+	case (UINT)SCRIPT_TYPE::MONSTERSPAWNER:
+		return new CMonsterSpawner;
+		break;
+	case (UINT)SCRIPT_TYPE::PORTALSCRIPT:
+		return new CPortalScript;
+		break;
+	case (UINT)SCRIPT_TYPE::LEFTBOSSALONESCRIPT:
+		return new CLeftBossAloneScript;
+		break;
+	case (UINT)SCRIPT_TYPE::RIGHTBOSSALONESCRIPT:
+		return new CRightBossAloneScript;
+		break;
+	case (UINT)SCRIPT_TYPE::ATTACKEFFECTSCRIPT:
+		return new CAttackEffectScript;
 		break;
 	}
 	return nullptr;
@@ -152,6 +187,21 @@ const wchar_t * ScriptMgr::GetScriptName(CScript * _pScript)
 	case SCRIPT_TYPE::FADESCRIPT:
 		return L"CFadeScript";
 		break;
+	case SCRIPT_TYPE::MONSTERSPAWNER:
+		return L"CMonsterSpawner";
+		break;
+	case SCRIPT_TYPE::PORTALSCRIPT:
+		return L"CPortalScript";
+		break;
+	case SCRIPT_TYPE::LEFTBOSSALONESCRIPT:
+		return L"CLeftBossAloneScript";
+		break;
+	case SCRIPT_TYPE::RIGHTBOSSALONESCRIPT:
+		return L"CRightBossAloneScript";
+		break;
+	case SCRIPT_TYPE::ATTACKEFFECTSCRIPT:
+		return L"CAttackEffectScript";
+		break;
 	}
 	return nullptr;
 }
@@ -183,6 +233,16 @@ const wchar_t* ScriptMgr::GetScriptNameByType(SCRIPT_TYPE type)
 		return L"CCursorScript";
 	case SCRIPT_TYPE::FADESCRIPT:
 		return L"CFadeScript";
+	case SCRIPT_TYPE::MONSTERSPAWNER:
+		return L"CMonsterSpawner";
+	case SCRIPT_TYPE::PORTALSCRIPT:
+		return L"CPortalScript";
+	case SCRIPT_TYPE::LEFTBOSSALONESCRIPT:
+		return L"CLeftBossAloneScript";
+	case SCRIPT_TYPE::RIGHTBOSSALONESCRIPT:
+		return L"CRightBossAloneScript";
+	case SCRIPT_TYPE::ATTACKEFFECTSCRIPT:
+		return L"CAttackEffectScript";
 	default:
 		return nullptr;
 	}

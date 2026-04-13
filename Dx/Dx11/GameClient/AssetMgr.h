@@ -3,6 +3,7 @@
 #include "assets.h"
 #include "PathMgr.h"
 #include "ALevel.h"
+#include "ASound.h"
 
 class AssetMgr
 	: public singleton<AssetMgr>
@@ -70,6 +71,8 @@ ASSET_TYPE GetAssetType()
 		return ASSET_TYPE::LEVEL;
 	else if constexpr (std::is_same_v<T, APrefab>)
 		return ASSET_TYPE::PREFAB;
+	else if constexpr (std::is_same_v<T, ASound>)
+		return ASSET_TYPE::SOUND;
 
 	return ASSET_TYPE::END;
 }

@@ -61,7 +61,15 @@ void Layer::Begin()
 {
 	for (size_t i = 0; i < m_vecParents.size(); ++i)
 	{
-		m_vecParents[i]->Begin();
+		GameObject* obj = m_vecParents[i].Get();
+
+		if (obj == nullptr)
+			continue;
+
+		if (obj->IsDead())
+			continue;
+
+		obj->Begin();
 	}
 }
 

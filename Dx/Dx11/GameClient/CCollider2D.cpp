@@ -36,8 +36,9 @@ void CCollider2D::FinalTick()
 		DrawDebugRect(m_matWorld, Vec4(1.f, 0.f, 0.f, 1.f), 0.f);
 	else if (m_OverlapCount == 0)
 		DrawDebugRect(m_matWorld, Vec4(0.f, 1.f, 0.f, 1.f), 0.f);
-	else
-		assert(nullptr);
+	else m_OverlapCount = 0;
+
+		//assert(nullptr);
 }
 
 void CCollider2D::BeginOverlap(Ptr<CCollider2D> _Other)

@@ -255,6 +255,77 @@ void AssetMgr::CreateEngineShader()
 void AssetMgr::CreateEngineTexture()
 {
 	// 이미지 무료 편집 툴 GIMP 사용
+	Load<ATexture>(L"Item1", L"Texture\\MapleStory_UI\\Item\\Item1.png");
+
+	Load<ATexture>(L"Item2", L"Texture\\MapleStory_UI\\Item\\Item2.png");
+
+	Load<ATexture>(L"Item3", L"Texture\\MapleStory_UI\\Item\\Item3.png");
+
+	Load<ATexture>(L"AttackMo1", L"Texture\\Charactor_Atlas\\AttackMo1_Atlas\\Result\\AttackMo1_Atlas.png");
+
+	Load<ATexture>(L"AttackMo2", L"Texture\\Charactor_Atlas\\AttackMo2_Atlas\\Result\\AttackMo2_Atlas.png");
+
+	Load<ATexture>(L"Damaged_Stand", L"Texture\\Charactor_Atlas\\Damaged_Stand_Atlas\\Result\\Damaged_Stand_Atlas.png");
+
+	Load<ATexture>(L"Down", L"Texture\\Charactor_Atlas\\Down_Atlas\\Result\\Down.png");
+
+	Load<ATexture>(L"Jump", L"Texture\\Charactor_Atlas\\Jump_Atlas\\Result\\Jump.png");
+
+	Load<ATexture>(L"Dead", L"Texture\\Charactor_Atlas\\Dead_Atlas\\Result\\Dead.png");
+
+	Load<ATexture>(L"Rope", L"Texture\\Charactor_Atlas\\Rope_Atlas\\Result\\Rope_Atlas.png");
+
+	Load<ATexture>(L"Stand", L"Texture\\Charactor_Atlas\\Stand_Atlas\\Result\\Stand_Atlas.png");
+
+	Load<ATexture>(L"Walk", L"Texture\\Charactor_Atlas\\Walk_Atlas\\Result\\Walk_Atlas.png");
+
+	Load<ATexture>(L"Skill_Effect", L"Texture\\Skill_Effect\\Skill_Effect_Atlas.png");
+
+	Load<ATexture>(L"Skelegon_attack", L"Texture\\Monster\\Skelegon\\attack\\Skelegon_attack_Atlas.png");
+
+	Load<ATexture>(L"Skelegon_die", L"Texture\\Monster\\Skelegon\\die\\Skelegon_die_Atlas.png");
+
+	Load<ATexture>(L"Skelegon_hit", L"Texture\\Monster\\Skelegon\\hit\\Skelegon_hit_Atlas.png");
+
+	Load<ATexture>(L"Skelegon_move", L"Texture\\Monster\\Skelegon\\move\\Skelegon_move_Atlas.png");
+
+	Load<ATexture>(L"Skelegon_stand", L"Texture\\Monster\\Skelegon\\stand\\Skelegon_stand_Atlas.png");
+
+	Load<ATexture>(L"Skellose_attack", L"Texture\\Monster\\Skellose\\attack\\Skellose_attack_Atlas.png");
+
+	Load<ATexture>(L"Skellose_die", L"Texture\\Monster\\Skellose\\die\\Skellose_die_Atlas.png");
+
+	Load<ATexture>(L"Skellose_hit", L"Texture\\Monster\\Skellose\\hit\\Skellose_hit_Atlas.png");
+
+	Load<ATexture>(L"Skellose_move", L"Texture\\Monster\\Skellose\\move\\Skellose_move_Atlas.png");
+
+	Load<ATexture>(L"Skellose_stand", L"Texture\\Monster\\Skellose\\stand\\Skellose_stand_Atlas.png");
+
+	Load<ATexture>(L"HonTail_LeftAlone_Attack1", L"Texture\\Hon_Tail_Alone\\HonTail_LeftAlone_Head\\HonTail_Left_Attack1\\Result\\HonTail_LeftAlone_Attack1.png");
+
+	Load<ATexture>(L"HonTail_LeftAlone_Attack1_Eft", L"Texture\\Hon_Tail_Alone\\HonTail_LeftAlone_Head\\HonTail_Left_Attack1_Prefeb\\Result\\HonTail_LeftAlone_Attack1_Eft_Atlas.png");
+
+	Load<ATexture>(L"HonTail_LeftAlone_Attack2", L"Texture\\Hon_Tail_Alone\\HonTail_LeftAlone_Head\\HonTail_Left_Attack2\\Result\\HonTail_LeftAlone_Attack2.png");
+
+	Load<ATexture>(L"HonTail_LeftAlone_Attack2_Eft", L"Texture\\Hon_Tail_Alone\\HonTail_LeftAlone_Head\\HonTail_Left_Attack2_Prefeb\\Result\\HonTail_LeftAlone_Attack2_Eft_Atlas.png");
+
+	Load<ATexture>(L"HonTail_LeftAlone_Spawn_Eft", L"Texture\\Hon_Tail_Alone\\HonTail_LeftAlone_Head\\HonTail_Left_Spawn\\Result\\HonTail_LeftAlone_Spawn_Eft_Atlas.png");
+
+	Load<ATexture>(L"HornTail_LeftAlone_Stand", L"Texture\\Hon_Tail_Alone\\HonTail_LeftAlone_Head\\HonTail_Left_Stand\\Result\\HornTail_LeftAlone_Stand_Atlas.png");
+
+	Load<ATexture>(L"HonTail_RightAlone_Attack1", L"Texture\\Hon_Tail_Alone\\HonTail_RightAlone_Head\\HonTail_Right_Attack1\\Result\\HonTail_RightAlone_Attack1.png");
+
+	Load<ATexture>(L"HonTail_RightAlone_Attack1_Eft", L"Texture\\Hon_Tail_Alone\\HonTail_RightAlone_Head\\HonTail_Right_Attack1_Prefeb\\Result\\HonTail_RightAlone_Attack1_Eft_Atlas.png");
+
+	Load<ATexture>(L"HonTail_RightAlone_Attack2", L"Texture\\Hon_Tail_Alone\\HonTail_RightAlone_Head\\HonTail_Right_Attack2\\Result\\HonTail_RightAlone_Attack2.png");
+
+	Load<ATexture>(L"HonTail_RightAlone_Attack2_Eft", L"Texture\\Hon_Tail_Alone\\HonTail_RightAlone_Head\\HonTail_Right_Attack2_Prefeb\\Result\\HonTail_RightAlone_Attack2_Eft_Atlast.png");
+
+	Load<ATexture>(L"HonTail_RightAlone_Spawn_Eft", L"Texture\\Hon_Tail_Alone\\HonTail_RightAlone_Head\\HonTail_Right_Spawn\\Result\\HonTail_RightAlone_Spawn_Eft_Atlas.png");
+
+	Load<ATexture>(L"HonTail_RightAlone_Stand", L"Texture\\Hon_Tail_Alone\\HonTail_RightAlone_Head\\HonTail_Right_Stand\\Result\\HonTail_RightAlone_Atlas.png");
+
+	Load<ATexture>(L"BarBgr", L"Texture\\MapleStory_UI\\BottomUI\\BarBgr.png");
 
 	Load<ATexture>(L"Left_Head_Stand", L"Texture\\Hon_Tail_Stand\\Left_Head_Stand_Atlas.png");
 

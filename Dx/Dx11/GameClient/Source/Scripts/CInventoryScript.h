@@ -35,6 +35,7 @@ private:
 
     int                     m_iDragFromIdx;
     bool                    m_bIsDragging;
+    bool                    m_bInitialized;
     int                     m_iCurrentTab; // 현재 선택된 탭 인덱스 (기본값 0: Equip)
 
     void ChangeTab(int _iNextTab);
@@ -55,6 +56,7 @@ public:
         // 그 자식들이 실제 슬롯들입니다.
         return m_vecTabContents[m_iCurrentTab]->GetChild();
     }
+
 
 private:
     // 저장 불러오기

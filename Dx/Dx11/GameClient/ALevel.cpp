@@ -2,6 +2,7 @@
 #include "ALevel.h"
 
 #include "LevelMgr.h"
+#include "SpawnMgr.h"
 
 
 ALevel::ALevel()
@@ -35,6 +36,8 @@ void ALevel::Deregister()
 
 void ALevel::Begin()
 {
+	SpawnMgr::GetInst()->Clear();
+
 	for (UINT i = 0; i < MAX_LAYER; ++i)
 	{
 		m_arrLayer[i].Begin();
@@ -80,31 +83,46 @@ void ALevel::CheckCollisionLayer(const wstring& _LayerName1, const wstring& _Lay
 
 Ptr<GameObject> ALevel::FindObjectByName(const wstring& _Name)
 {
-	for (UINT i = 0; i < MAX_LAYER; ++i)
+	for (UINT layerIdx = 0; layerIdx < MAX_LAYER; ++layerIdx)
 	{
-		const vector<Ptr<GameObject>>& vecParents = m_arrLayer[i].GetParentObjects();
+		const vector<Ptr<GameObject>>& vecParents = m_arrLayer[layerIdx].GetParentObjects();
 
-		for (size_t i = 0; i < vecParents.size(); ++i)
+		for (size_t parentIdx = 0; parentIdx < vecParents.size(); ++parentIdx)
 		{
-			list<Ptr<GameObject>>  queue;
-			queue.push_back(vecParents[i]);
+			// ⭐ Dead 부모는 시작부터 제외
+			if (vecParents[parentIdx] == nullptr || vecParents[parentIdx]->IsDead())
+				continue;
+
+			list<Ptr<GameObject>> queue;
+			queue.push_back(vecParents[parentIdx]);
 
 			while (!queue.empty())
 			{
 				Ptr<GameObject> pObject = queue.front();
 				queue.pop_front();
 
-				// 찾았다
+				if (pObject == nullptr)
+					continue;
+
+				// ⭐ Dead 객체는 무시 (핵심)
+				if (pObject->IsDead())
+					continue;
+
+				// ⭐ 이름 비교
 				if (pObject->GetName() == _Name)
 					return pObject;
 
 				const vector<Ptr<GameObject>>& vecChild = pObject->GetChild();
+
 				for (size_t j = 0; j < vecChild.size(); ++j)
 				{
+					// ⭐ 자식도 Dead이면 큐에 넣지 않음 (성능 + 안전)
+					if (vecChild[j] == nullptr || vecChild[j]->IsDead())
+						continue;
+
 					queue.push_back(vecChild[j]);
 				}
 			}
-
 		}
 	}
 

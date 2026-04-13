@@ -13,6 +13,7 @@ private:
 	class Component* compCheck = nullptr;
 public:
 	void AddTask(const TaskInfo& _info) { m_vecTask.push_back(_info); }
+	void Flush();
 
 public:
 	void Progress();

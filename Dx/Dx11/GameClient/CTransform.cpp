@@ -78,34 +78,12 @@ void CTransform::Binding()
 
 void CTransform::SetRelativeScale(Vec3 _Scale)
 {
-	// 객체 자체가 유효한지 먼저 확인
+	// 객체 자체가 유효한지 확인
 	if (!this)
 		return;
 
-	// m_RelativeScale를 안전하게 설정
+	// 인자로 들어온 값을 그대로 대입 (나눗셈 절대 금지)
 	m_RelativeScale = _Scale;
-
-	if (!m_IndependentScale)
-		return;
-
-	GameObject* owner = GetOwner();
-	if (!owner)
-		return;
-
-	GameObject* parent = owner->GetParent().Get();
-	if (!parent)
-		return;
-
-	CTransform* parentTransform = parent->Transform().Get();
-	if (!parentTransform)
-		return;
-
-	// 부모 스케일 고려
-	Vec3 parentScale = parentTransform->GetRelativeScale();
-	if (parentScale.x != 0.f && parentScale.y != 0.f && parentScale.z != 0.f)
-	{
-		m_RelativeScale = _Scale / parentScale;
-	}
 }
 
 Vec3 CTransform::GetWorldScale()

@@ -319,6 +319,27 @@
     <ClInclude Include="Source\Scripts\CFadeScript.h">
       <Filter>Source\Scripts</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Scripts\CMonsterSpawner.h">
+      <Filter>Source\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnMgr.h">
+      <Filter>GameEngine\03. Manager\11.SpawnMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scripts\CPortalScript.h">
+      <Filter>Source\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scripts\CLeftBossAloneScript.h">
+      <Filter>Source\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scripts\CRightBossAloneScript.h">
+      <Filter>Source\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scripts\CAttackEffectScript.h">
+      <Filter>Source\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="ASound.h">
+      <Filter>GameEngine\04. Asset\10.Sound</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="GameClient.ico">
@@ -574,6 +595,12 @@
     </Filter>
     <Filter Include="GameEngine\03. Manager\10. ItemMgr">
       <UniqueIdentifier>{a940ea9f-8379-4dc0-9aee-8a2054f87f37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameEngine\03. Manager\11.SpawnMgr">
+      <UniqueIdentifier>{22d03ab6-5704-4df5-9635-2db5060e4651}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameEngine\04. Asset\10.Sound">
+      <UniqueIdentifier>{3bb5f939-8a1d-4c50-9544-d30a393446f3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -867,6 +894,27 @@
     </ClCompile>
     <ClCompile Include="Source\Scripts\CFadeScript.cpp">
       <Filter>Source\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scripts\CMonsterSpawner.cpp">
+      <Filter>Source\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="SpawnMgr.cpp">
+      <Filter>GameEngine\03. Manager\11.SpawnMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scripts\CPortalScript.cpp">
+      <Filter>Source\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scripts\CLeftBossAloneScript.cpp">
+      <Filter>Source\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scripts\CRightBossAloneScript.cpp">
+      <Filter>Source\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scripts\CAttackEffectScript.cpp">
+      <Filter>Source\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="ASound.cpp">
+      <Filter>GameEngine\04. Asset\10.Sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

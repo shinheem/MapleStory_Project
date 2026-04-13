@@ -62,9 +62,6 @@ GameObject::~GameObject()
 
 void GameObject::Begin()
 {
-	if (m_bIsBegin) return;
-	m_bIsBegin = true;
-
 	for (size_t i = 0; i < m_vecScripts.size(); ++i)
 	{
 		m_vecScripts[i]->Begin();
@@ -447,4 +444,26 @@ void GameObject::LoadFromLevelFile(FILE* _File)
 		AddChild(ChildObject);
 		ChildObject->LoadFromLevelFile(_File);
 	}
+}
+
+Ptr<GameObject> GameObject::FindChildByName(const wstring& _Name)
+{
+	for (size_t i = 0; i < m_vecChild.size(); ++i)
+	{
+		// 1. 내 직속 자식들 중에서 이름이 일치하는지 확인
+		if (m_vecChild[i]->GetName() == _Name)
+		{
+			return m_vecChild[i];
+		}
+
+		// 2. 내 자식의 자식들(하위 계층)에서도 검색 (재귀 호출)
+		Ptr<GameObject> pChild = m_vecChild[i]->FindChildByName(_Name);
+		if (pChild != nullptr)
+		{
+			return pChild;
+		}
+	}
+
+	// 끝까지 못 찾았으면 nullptr 리턴
+	return nullptr;
 }

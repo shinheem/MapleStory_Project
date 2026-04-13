@@ -46,6 +46,7 @@ UINT g_KeyIndex[(UINT)KEY::KEY_END] =
 	VK_F7,
 	VK_F8,
 	VK_F9,
+	VK_DELETE,
 };
 
 KeyMgr::KeyMgr()

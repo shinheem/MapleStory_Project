@@ -11,6 +11,7 @@ private:
 
 public:
     virtual void Tick() override;
+    virtual void Begin() override;
 
     void SetTarget(GameObject* _Target) { m_pTarget = _Target; }
 

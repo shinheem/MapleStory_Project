@@ -19,6 +19,8 @@ Engine::Engine()
 
 Engine::~Engine()
 {
+    if (nullptr != m_FMODSystem)
+        m_FMODSystem->release();
 }
 
 int Engine::Progress()

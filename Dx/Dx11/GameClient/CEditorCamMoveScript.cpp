@@ -69,8 +69,8 @@ void CEditorCamMoveScript::MoveOrthographic()
 	Vec3 vPos = Transform()->GetRelativePos();
 
 	float Speed = m_Speed;
-	if (KEY_PRESSED(KEY::LSHIFT))
-		Speed *= 3.f;
+	/*if (KEY_PRESSED(KEY::LSHIFT))
+		Speed *= 3.f;*/
 
 
 	if (KEY_PRESSED(KEY::W))

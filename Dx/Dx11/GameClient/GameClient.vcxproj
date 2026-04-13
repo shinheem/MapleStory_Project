@@ -168,6 +168,7 @@ cd $(SolutionDir)</Command>
     <ClInclude Include="AMaterial.h" />
     <ClInclude Include="AMesh.h" />
     <ClInclude Include="APrefab.h" />
+    <ClInclude Include="ASound.h" />
     <ClInclude Include="ASprite.h" />
     <ClInclude Include="Asset.h" />
     <ClInclude Include="AssetMgr.h" />
@@ -244,6 +245,7 @@ cd $(SolutionDir)</Command>
     <ClInclude Include="CSpriteRender.h" />
     <ClInclude Include="SoundUI.h" />
     <ClInclude Include="Source\ScriptMgr.h" />
+    <ClInclude Include="Source\Scripts\CAttackEffectScript.h" />
     <ClInclude Include="Source\Scripts\CBossPartScript.h" />
     <ClInclude Include="Source\Scripts\CCamMoveScript.h" />
     <ClInclude Include="Source\Scripts\CCursorScript.h" />
@@ -252,10 +254,15 @@ cd $(SolutionDir)</Command>
     <ClInclude Include="Source\Scripts\CHonTailBossScript.h" />
     <ClInclude Include="Source\Scripts\CInventoryScript.h" />
     <ClInclude Include="Source\Scripts\CItemScript.h" />
+    <ClInclude Include="Source\Scripts\CLeftBossAloneScript.h" />
     <ClInclude Include="Source\Scripts\CMissileScript.h" />
     <ClInclude Include="Source\Scripts\CMonsterScript.h" />
+    <ClInclude Include="Source\Scripts\CMonsterSpawner.h" />
     <ClInclude Include="Source\Scripts\CPlayerScript.h" />
+    <ClInclude Include="Source\Scripts\CPortalScript.h" />
+    <ClInclude Include="Source\Scripts\CRightBossAloneScript.h" />
     <ClInclude Include="Source\Scripts\CSlotScript.h" />
+    <ClInclude Include="SpawnMgr.h" />
     <ClInclude Include="SpriteRenderUI.h" />
     <ClInclude Include="SpriteUI.h" />
     <ClInclude Include="struct.h" />
@@ -276,6 +283,7 @@ cd $(SolutionDir)</Command>
     <ClCompile Include="AMaterial.cpp" />
     <ClCompile Include="AMesh.cpp" />
     <ClCompile Include="APrefab.cpp" />
+    <ClCompile Include="ASound.cpp" />
     <ClCompile Include="ASprite.cpp" />
     <ClCompile Include="Asset.cpp" />
     <ClCompile Include="AssetMgr.cpp" />
@@ -349,6 +357,7 @@ cd $(SolutionDir)</Command>
     <ClCompile Include="ScriptUI.cpp" />
     <ClCompile Include="SoundUI.cpp" />
     <ClCompile Include="Source\ScriptMgr.cpp" />
+    <ClCompile Include="Source\Scripts\CAttackEffectScript.cpp" />
     <ClCompile Include="Source\Scripts\CBossPartScript.cpp" />
     <ClCompile Include="Source\Scripts\CCamMoveScript.cpp" />
     <ClCompile Include="Source\Scripts\CCursorScript.cpp" />
@@ -357,10 +366,15 @@ cd $(SolutionDir)</Command>
     <ClCompile Include="Source\Scripts\CHonTailBossScript.cpp" />
     <ClCompile Include="Source\Scripts\CInventoryScript.cpp" />
     <ClCompile Include="Source\Scripts\CItemScript.cpp" />
+    <ClCompile Include="Source\Scripts\CLeftBossAloneScript.cpp" />
     <ClCompile Include="Source\Scripts\CMissileScript.cpp" />
     <ClCompile Include="Source\Scripts\CMonsterScript.cpp" />
+    <ClCompile Include="Source\Scripts\CMonsterSpawner.cpp" />
     <ClCompile Include="Source\Scripts\CPlayerScript.cpp" />
+    <ClCompile Include="Source\Scripts\CPortalScript.cpp" />
+    <ClCompile Include="Source\Scripts\CRightBossAloneScript.cpp" />
     <ClCompile Include="Source\Scripts\CSlotScript.cpp" />
+    <ClCompile Include="SpawnMgr.cpp" />
     <ClCompile Include="SpriteRenderUI.cpp" />
     <ClCompile Include="SpriteUI.cpp" />
     <ClCompile Include="StructuredBuffer.cpp" />

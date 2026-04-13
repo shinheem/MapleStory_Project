@@ -26,6 +26,9 @@ void CInventoryScript::Begin()
     //if (GetOwner()->GetParent() != nullptr) return;
     //if (!m_vecTabContents.empty()) return;
 
+    if (m_bInitialized)
+        return;
+
     // 2. 인벤토리 데이터 배열 초기화 (24칸씩)
     for (int i = 0; i < (int)INVEN_TYPE::END; ++i)
     {
@@ -96,6 +99,7 @@ void CInventoryScript::Begin()
 
     // 6. 시작 시 인벤토리는 닫혀 있도록 설정 (필요 시)
     GetOwner()->SetActive(false);
+    m_bInitialized = true;
 }
 
 CInventoryScript::~CInventoryScript()

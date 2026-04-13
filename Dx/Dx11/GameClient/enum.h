@@ -21,6 +21,12 @@ enum class LAYER_TYPE
 	Layer_Enemy,
 	Layer_EnemyProjectile,
 	Layer_Item,
+	Layer_Spawner,
+	Layer_Enermy_Range,
+	Layer_Enermy_MonsterAttack,
+	Layer_Enermy_MonsterSensor,
+	Layer_PlayerAttack,
+
 };
 
 enum class RS_TYPE
@@ -158,7 +164,8 @@ enum class TASK_TYPE
 	CHANGE_LEVEL_STATE,
 	ADD_COMPONENT,      
 	REMOVE_COMPONENT,
-	ADD_SCRIPT
+	ADD_SCRIPT,
+	ENTER_LEVEL
 };
 
 enum class LIGHT_TYPE
@@ -226,4 +233,28 @@ enum class FADE_STATE
 	FADE_IN,
 	FADE_OUT,
 	NONE 
+};
+
+enum class SPAWNER_STATE 
+{
+	IDLE,       // 소환 전 초기 상태
+	SPAWNED,    // 몬스터가 살아있음
+	WAITING     // 몬스터가 죽어서 3초 대기 중
+};
+
+enum class MON_STATE {
+	STAND,  // 0
+	MOVE,   // 1
+	HIT,    // 2
+	ATTACK, // 3
+	DIE,    // 4
+};
+
+enum class BOSS_STATE
+{
+	APPEAR, // 등장 중
+	IDLE,   // 대기(Stand)
+	ATTACK1,
+	ATTACK2,
+	SUMMON,
 };

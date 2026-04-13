@@ -2,7 +2,9 @@
 #include "LevelMgr.h"
 #include "AssetMgr.h"
 #include "KeyMgr.h"
+#include "RenderMgr.h"
 
+#include "Source/Scripts/CCamMoveScript.h"
 #include "CollisionMgr.h"
 
 LevelMgr::LevelMgr()
@@ -16,103 +18,66 @@ LevelMgr::~LevelMgr()
 
 void LevelMgr::Init()
 {
-	// 1. 첫 레벨 로드
-	Ptr<ALevel> pStartLevel = AssetMgr::GetInst()->Load<ALevel>(L"Level\\Hontail_Boss_Level.lv", L"Level\\Hontail_Boss_Level.lv");
+	Ptr<ALevel> pStartLevel = AssetMgr::GetInst()->Load<ALevel>(
+		L"Level\\Dungeon_Level.lv",
+		L"Level\\Dungeon_Level.lv");
+
 	m_CurLevel = m_SharedLevel = pStartLevel;
 
-	Ptr<APrefab> pUIPrefab = AssetMgr::GetInst()->Load<APrefab>(L"Prefab\\GlobalUI.pref", L"Prefab\\GlobalUI.pref");
+	// ⭐ UI 생성 (1회만)
+	Ptr<APrefab> pUIPrefab = AssetMgr::GetInst()->Load<APrefab>(
+		L"Prefab\\GlobalUI.pref",
+		L"Prefab\\GlobalUI.pref");
+
 	if (pUIPrefab != nullptr)
 	{
-		GameObject* pUI = pUIPrefab->Instantiate();
-		pUI->SetName(L"GlobalUI");
-		// UI 전용 레이어(예: 31번)에 추가
-		m_CurLevel->AddObject(31, pUI);
+		m_UI = pUIPrefab->Instantiate();
+		m_UI->SetName(L"GlobalUI");
 	}
 
-	// 2. 플레이어 프리팹 소환
-	Ptr<APrefab> pPlayerPrefab = AssetMgr::GetInst()->Load<APrefab>(L"Prefab\\Maple_Player.pref", L"Prefab\\Maple_Player.pref");
-	Ptr<GameObject> pPlayer = nullptr;
+	// ⭐ Player 생성 (1회만)
+	Ptr<APrefab> pPlayerPrefab = AssetMgr::GetInst()->Load<APrefab>(
+		L"Prefab\\Maple_Player.pref",
+		L"Prefab\\Maple_Player.pref");
+
 	if (pPlayerPrefab != nullptr)
 	{
-		pPlayer = pPlayerPrefab->Instantiate();
-		pPlayer->SetName(L"Maple_Player");
-		m_CurLevel->AddObject(3, pPlayer);
+		m_Player = pPlayerPrefab->Instantiate();
+		m_Player->SetName(L"Maple_Player");
 	}
 
-	// 3. [핵심] PlayerStart 위치로 플레이어 이동
-	if (pPlayer != nullptr)
+	// ⭐ Camera 생성 (1회만)
+	Ptr<APrefab> pCameraPrefab = AssetMgr::GetInst()->Load<APrefab>(
+		L"Prefab\\MainCamera.pref",
+		L"Prefab\\MainCamera.pref");
+
+	if (pCameraPrefab != nullptr)
+	{
+		m_Camera = pCameraPrefab->Instantiate();
+		m_Camera->SetName(L"MainCamera");
+	}
+
+	// ⭐ 현재 레벨에 추가 (한 번만)
+	if (m_Player) m_CurLevel->AddObject(3, m_Player);
+	if (m_UI)     m_CurLevel->AddObject(31, m_UI);
+	if (m_Camera) m_CurLevel->AddObject(0, m_Camera);
+
+	// 시작 위치
+	if (m_Player != nullptr)
 	{
 		Ptr<GameObject> pStartObj = m_CurLevel->FindObjectByName(L"PlayerStart");
 		if (pStartObj != nullptr)
 		{
-			// PlayerStart의 월드/상대 좌표를 가져와서 플레이어에게 세팅
 			Vec3 vStartPos = pStartObj->Transform()->GetRelativePos();
-			pPlayer->Transform()->SetRelativePos(vStartPos);
+			m_Player->Transform()->SetRelativePos(vStartPos);
 		}
 	}
 
-	// 4. 카메라 소환 및 타겟팅
-	Ptr<APrefab> pCameraPrefab = AssetMgr::GetInst()->Load<APrefab>(L"Prefab\\MainCamera.pref", L"Prefab\\MainCamera.pref");
-	if (pCameraPrefab != nullptr)
-	{
-		GameObject* pCamera = pCameraPrefab->Instantiate();
-		pCamera->SetName(L"MainCamera");
-		m_CurLevel->AddObject(0, pCamera);
-
-		// 카메라가 플레이어를 즉시 따라가도록 설정
-		// pCamera->GetCamera()->SetTarget(pPlayer);
-	}
-
-	m_LevelState = LEVEL_STATE::PLAY;
-	m_CurLevel->Begin();
+	m_LevelState = LEVEL_STATE::STOP;
 }
 
 void LevelMgr::Progress()
 {
-
-	// 테스트용: 1번 키 입력 시 다른 레벨로 이동
-	// (KeyMgr 클래스가 있다고 가정할 때의 예시입니다)
-	//if (KEY_TAP(KEY::X))
-	//{
-	//	Ptr<ALevel> pLevelAsset = AssetMgr::GetInst()->Load<ALevel>(L"Level\\Hontail_Entrance_Level.lv", L"Level\\Hontail_Entrance_Level.lv");
-	//	if (pLevelAsset != nullptr)
-	//	{
-	//		// 원본 에셋을 그대로 쓰지 않고 Clone()하여 새 인스턴스를 만듭니다.
-	//		Ptr<ALevel> pNextLevel = pLevelAsset->Clone();
-	//		EnterLevel(pNextLevel);
-	//	}
-	//}
-
-	//if (KEY_TAP(KEY::C))
-	//{
-	//	Ptr<ALevel> pLevelAsset = AssetMgr::GetInst()->Load<ALevel>(L"Level\\Dungeon_Level.lv", L"Level\\Dungeon_Level.lv");
-	//	if (pLevelAsset != nullptr)
-	//	{
-	//		Ptr<ALevel> pNextLevel = pLevelAsset->Clone();
-	//		EnterLevel(pNextLevel);
-	//	}
-	//}
-
-	//if (KEY_TAP(KEY::W))
-	//{
-	//	Ptr<ALevel> pLevelAsset = AssetMgr::GetInst()->Load<ALevel>(L"Level\\Hontail_Left_Level.lv", L"Level\\Hontail_Left_Level.lv");
-	//	if (pLevelAsset != nullptr)
-	//	{
-	//		// 원본 에셋을 그대로 쓰지 않고 Clone()하여 새 인스턴스를 만듭니다.
-	//		Ptr<ALevel> pNextLevel = pLevelAsset->Clone();
-	//		EnterLevel(pNextLevel);
-	//	}
-	//}
-
-	//if (KEY_TAP(KEY::Q))
-	//{
-	//	Ptr<ALevel> pLevelAsset = AssetMgr::GetInst()->Load<ALevel>(L"Level\\Hontail_Right_Level.lv", L"Level\\Hontail_Right_Level.lv");
-	//	if (pLevelAsset != nullptr)
-	//	{
-	//		Ptr<ALevel> pNextLevel = pLevelAsset->Clone();
-	//		EnterLevel(pNextLevel);
-	//	}
-	//}
 
 	// 실행할 레벨이 지정된게 없으면 리턴
 	if (nullptr == m_CurLevel)
@@ -160,6 +125,14 @@ void LevelMgr::ChangeLevelState(LEVEL_STATE _NextState)
 		m_CurLevel = m_SharedLevel->Clone();
 		m_CurLevel->SetChanged();
 		m_CurLevel->Begin();
+
+		if (m_pCurBGM == nullptr) {
+			m_pCurBGM = LOAD(ASound, L"Sound\\DunGeon.mp3");
+		}
+
+		if (m_pCurBGM != nullptr) {
+			m_pCurBGM->Play(0, 0.5f, false);
+		}
 	}
 	
 	else if (  (m_LevelState == LEVEL_STATE::PLAY || m_LevelState == LEVEL_STATE::PAUSE)
@@ -174,54 +147,92 @@ void LevelMgr::ChangeLevelState(LEVEL_STATE _NextState)
 
 void LevelMgr::EnterLevel(Ptr<ALevel> _NextLevel)
 {
-	if (nullptr == _NextLevel || m_CurLevel == _NextLevel) return;
+	if (_NextLevel == nullptr || m_CurLevel == _NextLevel)
+		return;
 
-	// 1. 현재 레벨에서 이사 보낼 중요 객체들을 미리 확보
-	Ptr<ALevel> pPrevLevel = m_CurLevel;
-	Ptr<GameObject> pPlayer = pPrevLevel->FindObjectByName(L"Maple_Player");
-	Ptr<GameObject> pUI = pPrevLevel->FindObjectByName(L"GlobalUI");
-	Ptr<GameObject> pCamera = pPrevLevel->FindObjectByName(L"MainCamera");
-
-	// 2. [핵심] 이동할 레벨(_NextLevel)에 이미 동일한 이름의 객체가 있는지 체크 후 제거
-	// AssetMgr에 로드된 원본 레벨을 재사용할 때, 이전에 방문하며 추가됐던 객체들을 청소합니다.
-	Ptr<GameObject> pOldPlayer = _NextLevel->FindObjectByName(L"Maple_Player");
-	if (pOldPlayer != nullptr) pOldPlayer->Destroy();
-
-	Ptr<GameObject> pOldUI = _NextLevel->FindObjectByName(L"GlobalUI");
-	if (pOldUI != nullptr) pOldUI->Destroy();
-
-	Ptr<GameObject> pOldCamera = _NextLevel->FindObjectByName(L"MainCamera");
-	if (pOldCamera != nullptr) pOldCamera->Destroy();
-
-	// 3. 기존 레벨의 레이어 이름 및 충돌 매트릭스 설정을 새 레벨로 복사
-	_NextLevel->CopyLogicSettings(pPrevLevel);
-
-	// 4. 레벨 교체 (이제 m_CurLevel은 새 레벨을 가리킴)
-	m_CurLevel = m_SharedLevel = _NextLevel;
-
-	// 5. 새 레벨에 객체들을 등록 (기존에 쓰던 객체를 그대로 유지)
-	if (pPlayer != nullptr) m_CurLevel->AddObject(3, pPlayer);
-	if (pUI != nullptr)     m_CurLevel->AddObject(31, pUI);
-	if (pCamera != nullptr) m_CurLevel->AddObject(0, pCamera);
-
-	// 6. 새 레벨의 시작 위치(PlayerStart)로 플레이어 및 카메라 좌표 이동
-	Ptr<GameObject> pStartObj = m_CurLevel->FindObjectByName(L"PlayerStart");
-	if (pPlayer != nullptr && pStartObj != nullptr)
+	// 1️⃣ 기존 레벨에서 UI와 Player를 안전하게 제거 (메모리 해제가 아님!)
+	// 이 과정이 없으면 이전 레벨이 Delete될 때 UI도 같이 사라질 수 있습니다.
+	if (m_CurLevel.Get())
 	{
-		Vec3 vStartPos = pStartObj->Transform()->GetRelativePos();
-		pPlayer->Transform()->SetRelativePos(vStartPos);
-
-		// 카메라도 플레이어 위치로 즉시 이동
-		if (pCamera != nullptr)
-			pCamera->Transform()->SetRelativePos(vStartPos);
+		// 엔진에 해당 객체를 레벨의 관리 대상에서 제외하는 기능이 있다면 호출
+		// 예: m_CurLevel->RemoveObject(m_UI); 
 	}
 
-	// 7. 상태 설정 및 시작
+	// 2️⃣ 레벨 교체
+	m_CurLevel = m_SharedLevel = _NextLevel;
 	m_LevelState = LEVEL_STATE::PLAY;
 
-	// 레벨의 첫 시작(Begin) 호출
-	m_CurLevel->Begin();
+	// 3️⃣ UI 데이터 보존을 위해 '이미 존재하는지' 확인 후 등록
+	// 새로 생성(Instantiate)하는 것이 아니라, Init에서 만든 m_UI를 그대로 재사용합니다.
+	if (m_UI)
+	{
+		// 이미 새 레벨에 같은 이름의 UI가 있다면 중복 생성 방지를 위해 체크
+		if (m_CurLevel->FindObjectByName(L"GlobalUI") == nullptr)
+		{
+			m_CurLevel->AddObject(31, m_UI);
+		}
+	}
 
-	// 레벨이 변경되었음을 엔진에 알림
+	if (m_Player)
+	{
+		if (m_CurLevel->FindObjectByName(L"Maple_Player") == nullptr)
+		{
+			m_CurLevel->AddObject(3, m_Player);
+		}
+	}
+
+	// 4️⃣ PlayerStart 위치 적용
+	Ptr<GameObject> pStartObj = m_CurLevel->FindObjectByName(L"PlayerStart");
+	if (m_Player && pStartObj)
+	{
+		Vec3 vStartPos = pStartObj->Transform()->GetRelativePos();
+		m_Player->Transform()->SetRelativePos(vStartPos);
+	}
+
+	// 5️⃣ 레벨 시작 및 카메라 등록
+	m_CurLevel->Begin();
+	if (m_Camera)
+	{
+		m_CurLevel->AddObject(0, m_Camera);
+		if (m_Camera->Camera())
+			RenderMgr::GetInst()->RegisterMainCamera(m_Camera->Camera());
+	}
+
+	wstring strLevelPath = _NextLevel->GetKey();
+	wstring strTargetBGM = L"";
+
+	if (strLevelPath.find(L"Dungeon_Level") != wstring::npos)
+	{
+		strTargetBGM = L"Sound\\DunGeon.mp3";
+	}
+	else if (strLevelPath.find(L"Hontail_Entrance_Level") != wstring::npos ||
+		strLevelPath.find(L"Hontail_Left_Level") != wstring::npos ||
+		strLevelPath.find(L"Hontail_Right_Level") != wstring::npos)
+	{
+		strTargetBGM = L"Sound\\Hontail_Entrance.mp3";
+	}
+	else if (strLevelPath.find(L"Hontail_Boss_Level") != wstring::npos)
+	{
+		strTargetBGM = L"Sound\\HonTale.mp3";
+	}
+
+	if (!strTargetBGM.empty())
+	{
+		if (m_pCurBGM == nullptr || m_pCurBGM->GetKey() != strTargetBGM)
+		{
+			if (m_pCurBGM != nullptr)
+			{
+				m_pCurBGM->Stop();
+			}
+
+			m_pCurBGM = LOAD(ASound, strTargetBGM);
+
+			if (m_pCurBGM != nullptr)
+			{
+				m_pCurBGM->Play(0, 0.5f, false);
+			}
+		}
+	}
+
 	m_CurLevel->SetChanged();
 }

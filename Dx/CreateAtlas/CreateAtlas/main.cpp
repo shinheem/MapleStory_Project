@@ -9,13 +9,13 @@ using namespace std;
 
 int main()
 {
-    string FilePath = "D:\\HM\\Dx\\CreateAtlas\\CreateAtlas\\x64\\Debug\\image\\";
-    string ForderName= "Cursor_HoldAni\\";
-    string PNGName = "Cursor_HoldAni_";
+    string FilePath = "D:\\HM\\Dx\\CreateAtlas\\CreateAtlas\\x64\\Debug\\image\\Charactor\\";
+    string ForderName= "Walk\\";
+    string PNGName = "Walk_";
     
-    string AtlasForderName = "Cursor_HoldAni_Atlas\\";
-    string AtlasName = "Cursor_HoldAni_Atlas";
-    int PngCount = 3;
+    string AtlasForderName = "Walk_Atlas";
+    string AtlasName = "Walk_Atlas";
+    int PngCount = 4;
 
     //// 반복재생 형식으로 제작할 때
     //vector<string> images = {

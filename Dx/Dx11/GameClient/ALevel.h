@@ -20,6 +20,7 @@ public:
     void Deregister();
     void CheckCollisionLayer(UINT _LayerIdx1, UINT _LayerIdx2);
     void CheckCollisionLayer(const wstring& _LayerName1, const wstring& _LayerName2);
+    UINT GetMatrixRow(UINT _idx) { return m_Matrix[_idx]; }
 
     UINT* GetCollisionMatrix() { return m_Matrix; }
     Ptr<GameObject> FindObjectByName(const wstring& _Name);

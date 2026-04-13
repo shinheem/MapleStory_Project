@@ -536,35 +536,89 @@ void Menu::DeleteGameObject(int layerIdx, int objIndex)
 
 void Menu::CollisionWindow()
 {
-    ImGui::Begin("Layer Collision", &m_bCollisionWindow);
+	ImGui::SetNextWindowSize(ImVec2(700, 500), ImGuiCond_FirstUseEver);
+	if (!ImGui::Begin("Collision Matrix Manager", &m_bCollisionWindow))
+	{
+		ImGui::End();
+		return;
+	}
 
-    Ptr<ALevel> pLevel = LevelMgr::GetInst()->GetCurLevel();
-    if (!pLevel) { ImGui::End(); return; }
+	Ptr<ALevel> pLevel = LevelMgr::GetInst()->GetCurLevel();
+	if (!pLevel) { ImGui::End(); return; }
 
-    int layerCount = (int)pLevel->GetLayerCount();
-    
-    // CollisionMatrix 크기 안전하게 맞추기
-    while ((int)m_CollisionMatrix.size() < layerCount)
-        AddLayerToCollisionMatrix();
+	int layerCount = pLevel->GetLayerCount(); // MAX_LAYER (보통 32)
 
-    for (int i = 0; i < layerCount; ++i)
-    {
-        for (int j = i + 1; j < layerCount; ++j)
-        {
-            bool collide = m_CollisionMatrix[i][j];
-            std::wstring label = pLevel->GetLayer(i)->GetName() + L" <-> " + pLevel->GetLayer(j)->GetName();
-            if (ImGui::Checkbox(std::string(label.begin(), label.end()).c_str(), &collide))
-            {
-                m_CollisionMatrix[i][j] = collide;
-                if (collide)
-                    pLevel->CheckCollisionLayer(i, j);
-                else
-                    pLevel->UncheckCollisionLayer(i, j);
-            }
-        }
-    }
+	// 가로 스크롤이 가능하도록 설정
+	if (ImGui::BeginTable("CollisionMatrix", layerCount + 1,
+		ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg))
+	{
+		// [1] 헤더 - 레이어 이름을 세로로 세우거나 짧게 표기
+		ImGui::TableNextRow(ImGuiTableRowFlags_Headers);
+		ImGui::TableSetColumnIndex(0);
+		ImGui::Text("Layer Names");
 
-    ImGui::End();
+		for (int i = 0; i < layerCount; ++i)
+		{
+			ImGui::TableSetColumnIndex(i + 1);
+			// 레이어 이름이 너무 길면 앞의 3~4글자만 출력하거나 인덱스 번호 출력
+			string name = string(pLevel->GetLayer(i)->GetName().begin(), pLevel->GetLayer(i)->GetName().end());
+			if (name.empty()) name = to_string(i);
+			ImGui::Text("%s", name.c_str());
+		}
+
+		// [2] 행렬 본문
+		for (int i = 0; i < layerCount; ++i)
+		{
+			ImGui::TableNextRow();
+
+			// 첫 번째 열: 행 레이어 이름
+			ImGui::TableSetColumnIndex(0);
+			string rowName = string(pLevel->GetLayer(i)->GetName().begin(), pLevel->GetLayer(i)->GetName().end());
+			if (rowName.empty()) rowName = "Layer " + std::to_string(i);
+			ImGui::Text("%s", rowName.c_str());
+
+			// 비트 필드 데이터 가져오기 (ALevel의 m_Matrix 접근)
+			// m_Matrix는 private일 가능성이 높으므로 pLevel->GetCollisionMatrix(i) 같은 getter가 필요할 수 있습니다.
+			// 여기선 로직 흐름을 위해 직접 접근하는 형태로 작성합니다.
+			UINT matrixRow = pLevel->GetMatrixRow(i);
+
+			for (int j = 0; j < layerCount; ++j)
+			{
+				ImGui::TableSetColumnIndex(j + 1);
+
+				// 유니티 스타일: 하단 삼각형은 그리지 않아 시각적 복잡도 감소
+				if (j < i)
+				{
+					ImGui::TextDisabled("-");
+					continue;
+				}
+
+				// 현재 비트 상태 확인 (i번째 레이어의 j번째 비트가 켜져있는가)
+				bool bCheck = (matrixRow & (1 << j));
+
+				// 체크박스 생성
+				string label = "##col_" + to_string(i) + "_" + to_string(j);
+				if (ImGui::Checkbox(label.c_str(), &bCheck))
+				{
+					if (bCheck)
+						pLevel->CheckCollisionLayer(i, j); // 비트 켜기
+					else
+						pLevel->UncheckCollisionLayer(i, j); // 비트 끄기
+				}
+
+				// 마우스 호버 시 어떤 레이어들인지 툴팁 표시 (편의 기능)
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::SetTooltip("%s <-> %s",
+						string(pLevel->GetLayer(i)->GetName().begin(), pLevel->GetLayer(i)->GetName().end()).c_str(),
+						string(pLevel->GetLayer(j)->GetName().begin(), pLevel->GetLayer(j)->GetName().end()).c_str());
+				}
+			}
+		}
+		ImGui::EndTable();
+	}
+
+	ImGui::End();
 }
 
 void Menu::AddLayerToCollisionMatrix()

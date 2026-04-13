@@ -160,6 +160,8 @@ bool CFlipbookRender::CheckFinish()
 			return true;
 		}
 	}
+
+	return m_Finish;
 }
 
 

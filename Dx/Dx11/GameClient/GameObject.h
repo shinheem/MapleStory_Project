@@ -81,6 +81,7 @@ public:
     vector<Ptr<GameObject>> GetChilds() { return m_vecChild; }
     const vector<Ptr<GameObject>>& GetChild() { return m_vecChild; }
 
+    Ptr<GameObject> FindChildByName(const wstring& _Name);
     bool IsDead() { return m_Dead; }
     void Destroy();
 

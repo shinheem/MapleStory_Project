@@ -16,76 +16,71 @@ CCamMoveScript::~CCamMoveScript()
 {
 }
 
+void CCamMoveScript::Begin()
+{
+	GameObject* pPlayer = LevelMgr::GetInst()->GetCurLevel()->FindObjectByName(L"Maple_Player").Get();
+	if (pPlayer)
+	{
+		Vec3 vPlayerPos = pPlayer->Transform()->GetRelativePos();
+		Vec3 vCamPos = Transform()->GetRelativePos();
+
+		// Begin 호출 시점에 즉시 플레이어 위치로 카메라 좌표를 동기화
+		vCamPos.x = vPlayerPos.x;
+		vCamPos.y = vPlayerPos.y;
+		Transform()->SetRelativePos(vCamPos);
+
+		// 행렬 갱신을 통해 Tick 이전에 이미 위치가 확정되게 함
+		Transform()->FinalTick();
+	}
+}
+
 void CCamMoveScript::Tick()
 {
-    // 1. 타겟 및 카메라 컴포넌트 가져오기
-    GameObject* pPlayer = LevelMgr::GetInst()->GetCurLevel()->FindObjectByName(L"Maple_Player").Get();
-    if (nullptr == pPlayer) return;
+	GameObject* pPlayer = LevelMgr::GetInst()->GetCurLevel()->FindObjectByName(L"Maple_Player").Get();
+	if (nullptr == pPlayer) return;
 
-    CCamera* pCam = GetOwner()->Camera().Get();
-    if (nullptr == pCam) return;
+	CCamera* pCam = GetOwner()->Camera().Get();
+	if (nullptr == pCam) return;
 
-    // 2. 위치 정보 가져오기
-    Vec3 vPlayerPos = pPlayer->Transform()->GetRelativePos();
-    Vec3 vCamPos = Transform()->GetRelativePos();
+	Vec3 vPlayerPos = pPlayer->Transform()->GetRelativePos();
+	Vec3 vCamPos = Transform()->GetRelativePos();
+	Vec3 vTargetPos = Vec3(vPlayerPos.x, vPlayerPos.y, vCamPos.z);
 
-    // ---------------------------------------------------------
-    // ★ 수정 1: Offset을 대폭 낮추거나 0으로 설정
-    // 캐릭터 상단이 찍힌다는 건 카메라 목표지점이 너무 높다는 뜻입니다.
-    // 0.f로 먼저 테스트해보고, 캐릭터 발이 잘린다면 조금씩 올리세요.
-    float fOffsetY = 0.f; 
-    Vec3 vTargetPos = Vec3(vPlayerPos.x, vPlayerPos.y + fOffsetY, vPlayerPos.z);
-    // ---------------------------------------------------------
+	// 현재 좌표와 목표 좌표 사이의 거리 체크 (2D 평면)
+	float fDist = Vec2::Distance(Vec2(vCamPos.x, vCamPos.y), Vec2(vTargetPos.x, vTargetPos.y));
 
-    // 3. 부드러운 추적
-    vCamPos.x = Lerp(vCamPos.x, vTargetPos.x, DT * 3.5f);
-    vCamPos.y = Lerp(vCamPos.y, vTargetPos.y, DT * 3.5f);
+	// [중요] 거리가 너무 멀면(레벨 이동 등) Lerp를 무시하고 즉시 이동
+	if (fDist > 100.f)
+	{
+		vCamPos.x = vTargetPos.x;
+		vCamPos.y = vTargetPos.y;
+	}
+	else
+	{
+		// 평상시 부드러운 이동
+		vCamPos.x = Lerp(vCamPos.x, vTargetPos.x, DT * 8.0f);
+		vCamPos.y = Lerp(vCamPos.y, vTargetPos.y, DT * 8.0f);
+	}
 
-    // 4. 확대 설정
-    float fScale = 0.65f;
-    if (PROJ_TYPE::PERSPECTIVE == pCam->GetProjType()) {
-        vCamPos.z = -400.f;
-    } else {
-        pCam->SetOrthoScale(fScale);
-    }
-
-    // ---------------------------------------------------------
-    // ★ 수정 2: 맵 경계 제한 확인 (가장 의심되는 부분)
-    // 캐릭터가 바닥 근처에 있을 때 fMapMinY가 너무 높으면 카메라가 위로 튕깁니다.
-    // 일단 제한을 확 풀어서(-2000.f) 캐릭터가 중앙에 오는지 확인하세요.
-    // ---------------------------------------------------------
-    float fMapMinX = -2000.f;  float fMapMaxX = 5000.f;
-    float fMapMinY = -2000.f;  float fMapMaxY = 5000.f; // 우선 범위를 크게 잡으세요.
-
-    float fHalfWidth = (1600.f * fScale) * 0.5f;
-    float fHalfHeight = (900.f * fScale) * 0.5f;
-
-    // Clamp 로직
-    if (vCamPos.x < fMapMinX + fHalfWidth) vCamPos.x = fMapMinX + fHalfWidth;
-    if (vCamPos.x > fMapMaxX - fHalfWidth) vCamPos.x = fMapMaxX - fHalfWidth;
-    if (vCamPos.y < fMapMinY + fHalfHeight) vCamPos.y = fMapMinY + fHalfHeight;
-    if (vCamPos.y > fMapMaxY - fHalfHeight) vCamPos.y = fMapMaxY - fHalfHeight;
-
-    // 5. 결과 적용
-    Transform()->SetRelativePos(vCamPos);
+	Transform()->SetRelativePos(vCamPos);
 }
 
 void CCamMoveScript::MovePerspective()
 {
-	//// 플레이어 위치와 카메라 위치 가져오기
-	//Vec3 vPlayerPos = m_pTarget->Transform()->GetRelativePos();
-	//Vec3 vCamPos = Transform()->GetRelativePos();
+	// 플레이어 위치와 카메라 위치 가져오기
+	Vec3 vPlayerPos = m_pTarget->Transform()->GetRelativePos();
+	Vec3 vCamPos = Transform()->GetRelativePos();
 
-	//// [추적] X, Y 좌표를 플레이어 위치로 부드럽게 이동 (Lerp)
-	//vCamPos.x = Lerp(vCamPos.x, vPlayerPos.x, DT * 10.f);
-	//vCamPos.y = Lerp(vCamPos.y, vPlayerPos.y, DT * 10.f);
+	// [추적] X, Y 좌표를 플레이어 위치로 부드럽게 이동 (Lerp)
+	vCamPos.x = Lerp(vCamPos.x, vPlayerPos.x, DT * 10.f);
+	vCamPos.y = Lerp(vCamPos.y, vPlayerPos.y, DT * 10.f);
 
-	//// [확대] Z값을 0에 가깝게 설정 (값이 커질수록(0에 가까울수록) 화면이 확대됨)
-	//// -1000.f가 기본이라면, -300.f ~ -400.f 정도로 설정하면 많이 확대됩니다.
-	//vCamPos.z = -400.f;
+	// [확대] Z값을 0에 가깝게 설정 (값이 커질수록(0에 가까울수록) 화면이 확대됨)
+	// -1000.f가 기본이라면, -300.f ~ -400.f 정도로 설정하면 많이 확대됩니다.
+	vCamPos.z = -400.f;
 
-	//// 최종 좌표 적용
-	//Transform()->SetRelativePos(vCamPos);
+	// 최종 좌표 적용
+	Transform()->SetRelativePos(vCamPos);
 }
 
 void CCamMoveScript::MoveOrthographic()

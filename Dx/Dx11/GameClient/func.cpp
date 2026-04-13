@@ -166,11 +166,11 @@ float Saturate(float _Data)
 void CreateTestLevel()
 {
 	{
-		Ptr<ALevel> pLevel = LOAD(ALevel, L"Level\\Hontail_Boss_Level.lv");		
-		ChangeLevel(L"Level\\Hontail_Boss_Level.lv");
+		Ptr<ALevel> pLevel = LOAD(ALevel, L"Level\\Dungeon_Level.lv");		
+		ChangeLevel(L"Level\\Dungeon_Level.lv");
 	}	
 
-	return;
+	/*return;*/
 
 	//// Level 생성
 	//Ptr<ALevel> pLevel = new ALevel;

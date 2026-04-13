@@ -90,6 +90,49 @@ void TaskMgr::Progress()
 			pObj->RemoveComponent(pComp); // 내부에서 스마트 포인터 참조 감소
 		}
 		break;
+
+		case TASK_TYPE::ENTER_LEVEL:
+		{
+			const wchar_t* pLevelPath = (const wchar_t*)m_vecTask[i].Param_0;
+
+			TaskMgr::GetInst()->Flush();
+
+			// 1. 에셋 로드
+			Ptr<ALevel> pLevelAsset = AssetMgr::GetInst()->Load<ALevel>(pLevelPath, pLevelPath);
+			if (pLevelAsset != nullptr)
+			{
+				Ptr<ALevel> pNextLevel = pLevelAsset->Clone();
+
+				LevelMgr::GetInst()->EnterLevel(pNextLevel);
+			}
+
+			delete[] pLevelPath;
+		}
+		break;
+		}
+	}
+
+	m_vecTask.clear();
+}
+
+void TaskMgr::Flush()
+{
+	for (size_t i = 0; i < m_vecTask.size(); ++i)
+	{
+		const TaskInfo& task = m_vecTask[i];
+
+		switch (task.Type)
+		{
+		case TASK_TYPE::DESTROY_OBJECT:
+		{
+			GameObject* obj = (GameObject*)task.Param_0;
+
+			if (obj != nullptr)
+			{
+				delete obj;
+			}
+		}
+		break;
 		}
 	}
 

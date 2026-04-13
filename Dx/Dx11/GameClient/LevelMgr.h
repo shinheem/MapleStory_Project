@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ALevel.h"
+#include "ASound.h"
 
 class LevelMgr
 	: public singleton<LevelMgr>
@@ -11,19 +12,23 @@ private:
 	Ptr<ALevel>		m_SharedLevel;	// 에셋매니저를 통해서 관리되는 레벨 에셋
 	LEVEL_STATE		m_LevelState;
 
+	Ptr<GameObject> m_Player;
+	Ptr<GameObject> m_UI;
+	Ptr<GameObject> m_Camera;
+
+	Ptr<ASound> m_pCurBGM;
+
 public:
 	Ptr<ALevel> GetCurLevel() { return m_CurLevel; }
 	Ptr<GameObject> FindObjectByName(const wstring& _name);	
 	LEVEL_STATE GetLevelState() { return m_LevelState; }
 	
 
-
 private:
 	void ChangeLevel(Ptr<ALevel> _NextLevel);
 	void ChangeLevelState(LEVEL_STATE _NextState);
-
 	void EnterLevel(Ptr<ALevel> _NextLevel);
-
+	
 public:
 	void Init();
 	void Progress();

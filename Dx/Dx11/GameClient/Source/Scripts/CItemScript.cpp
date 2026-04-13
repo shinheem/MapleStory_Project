@@ -39,6 +39,8 @@ void CItemScript::Begin()
     col->AddDynamicBeginOverlap(this, (COLLISION_EVENT)&CItemScript::OnBeginOverlap);
     col->AddDynamicOverlap(this, (COLLISION_EVENT)&CItemScript::OnOverlap);
     col->AddDynamicEndOverlap(this, (COLLISION_EVENT)&CItemScript::OnEndOverlap);
+
+    m_vVelocity.y = 200.f;
 }
 
 void CItemScript::Tick()
@@ -175,7 +177,7 @@ void CItemScript::OnOverlap(CCollider2D* _MyCol, CCollider2D* _OtherCol)
     GameObject* Other = _OtherCol->GetOwner();
 
     if (Other->GetLayerIdx() == (int)LAYER_TYPE::Layer_Tile && Other->GetName() == L"Ground" ||
-        Other->GetLayerIdx() == (int)LAYER_TYPE::Layer_Background && Other->GetName() == L"FootBord")
+        Other->GetLayerIdx() == (int)LAYER_TYPE::Layer_Background && Other->GetName() == L"FootBoard")
     {
         // 이미 착지했다면 중복 계산 방지
         if (m_bGround) return;
